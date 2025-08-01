@@ -8,9 +8,14 @@ public class MainGame : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        
         for (int i = 0; i < frogControls.Count; i++)
         {
             int temp = i;
+            frogControls[temp].OnClicked += () =>
+            {
+                Debug.Log($"Frog {temp}");
+            };
             DOVirtual.DelayedCall(i + 1, () =>
             {
                 frogControls[temp].Play();

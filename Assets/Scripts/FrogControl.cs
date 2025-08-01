@@ -1,4 +1,6 @@
+using System;
 using DG.Tweening;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class FrogControl : MonoBehaviour
@@ -7,6 +9,8 @@ public class FrogControl : MonoBehaviour
     private GameObject active;
     private GameObject happy;
     private Tween playingTween;
+    public event Action OnClicked;  // 🔔 C# event
+
     
     void Start()
     {
@@ -21,6 +25,12 @@ public class FrogControl : MonoBehaviour
     void Update()
     {
         
+    }
+    
+    void OnMouseDown()
+    {
+        OnClicked?.Invoke();
+        Play();
     }
 
     public void Play()
