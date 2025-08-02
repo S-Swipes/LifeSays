@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using System;
+using Unity.Cinemachine;
 
 [System.Serializable]
 public class GameSegment
@@ -25,6 +26,10 @@ public class MainGame : MonoBehaviour
     public float delayBetweenSegments = 2f;
     public bool autoProgressSegments = true;
     
+    [Header("Camera Settings")]
+    public CinemachineMixingCamera mixingCamera;
+    public float cameraTransitionDuration = 2f;
+    
     [Header("Debug")]
     public bool debugMode = true;
     
@@ -34,6 +39,7 @@ public class MainGame : MonoBehaviour
     private int currentRevealedLength = 1; // Simon Says: how many elements of the sequence are currently revealed
     private bool isPlayingSegment = false;
     private bool isWaitingForPlayerInput = false; // True when sequence finished playing and waiting for player
+    private int currentCameraIndex = 0;
     
     // Events
     public event Action<int> OnSegmentStarted;
@@ -42,7 +48,28 @@ public class MainGame : MonoBehaviour
 
     void Start()
     {
+        InitializeCamera();
         InitializeGame();
+    }
+    
+    void InitializeCamera()
+    {
+        if (mixingCamera != null)
+        {
+            // Set initial camera weights - start with camera 0
+            for (int i = 0; i < mixingCamera.ChildCameras.Count; i++)
+            {
+                float weight = (i == currentCameraIndex) ? 1f : 0f;
+                mixingCamera.SetWeight(i, weight);
+            }
+            
+            if (debugMode)
+                Debug.Log($"Camera initialized. Starting with camera {currentCameraIndex}");
+        }
+        else
+        {
+            Debug.LogWarning("MixingCamera reference not set in MainGame!");
+        }
     }
 
     void InitializeGame()
@@ -86,6 +113,10 @@ public class MainGame : MonoBehaviour
         {
             if (debugMode)
                 Debug.Log("All segments completed!");
+            
+            // Switch to next camera when all segments are complete
+            SwitchToNextCamera();
+            
             OnAllSegmentsCompleted?.Invoke();
             return;
         }
@@ -279,7 +310,12 @@ public class MainGame : MonoBehaviour
         // Add a 1-second delay before calling Game Segment Looper
         DOVirtual.DelayedCall(1f, () =>
         {
-            //  move camera to the next segment
+            // Move camera to the next segment (if there are more segments)
+            if (segmentIndex + 1 < gameSegments.Count)
+            {
+                SwitchToNextCamera();
+            }
+            
             GetComponent<GameSegmentLooper>().PlaySegment(gameSegments[segmentIndex]);
         });
         segment.isCompleted = true;
@@ -298,6 +334,54 @@ public class MainGame : MonoBehaviour
                 StartSegment(segmentIndex + 1);
             });
         }
+    }
+    
+    void SwitchToNextCamera()
+    {
+        if (mixingCamera == null)
+        {
+            Debug.LogWarning("MixingCamera reference not set!");
+            return;
+        }
+        
+        int nextCameraIndex = currentCameraIndex + 1;
+        
+        // Make sure we don't exceed available cameras
+        if (nextCameraIndex >= mixingCamera.ChildCameras.Count)
+        {
+            if (debugMode)
+                Debug.LogWarning($"Cannot switch to camera {nextCameraIndex} - only {mixingCamera.ChildCameras.Count} cameras available");
+            return;
+        }
+        
+        SwitchToCamera(nextCameraIndex);
+    }
+    
+    void SwitchToCamera(int cameraIndex)
+    {
+        if (mixingCamera == null || cameraIndex < 0 || cameraIndex >= mixingCamera.ChildCameras.Count)
+        {
+            Debug.LogWarning($"Cannot switch to camera {cameraIndex} - invalid index or missing camera reference");
+            return;
+        }
+        
+        if (cameraIndex == currentCameraIndex)
+        {
+            return; // Already on this camera
+        }
+        
+        int previousCameraIndex = currentCameraIndex;
+        currentCameraIndex = cameraIndex;
+        
+        // Smooth transition between cameras
+        DOVirtual.Float(0, 1, cameraTransitionDuration, (weight) =>
+        {
+            mixingCamera.SetWeight(cameraIndex, weight);
+            mixingCamera.SetWeight(previousCameraIndex, 1 - weight);
+        }).SetEase(Ease.Linear);
+        
+        if (debugMode)
+            Debug.Log($"Camera switched from {previousCameraIndex} to {cameraIndex}");
     }
 
     // Public methods for manual control
@@ -332,6 +416,17 @@ public class MainGame : MonoBehaviour
         isPlayingSegment = false;
         isWaitingForPlayerInput = false;
         
+        // Reset camera to first position
+        currentCameraIndex = 0;
+        if (mixingCamera != null)
+        {
+            for (int i = 0; i < mixingCamera.ChildCameras.Count; i++)
+            {
+                float weight = (i == currentCameraIndex) ? 1f : 0f;
+                mixingCamera.SetWeight(i, weight);
+            }
+        }
+        
         DOVirtual.DelayedCall(0.5f, () => StartSegment(0));
     }
 
@@ -339,4 +434,11 @@ public class MainGame : MonoBehaviour
     public int CurrentSegmentIndex => currentSegmentIndex;
     public bool IsPlayingSegment => isPlayingSegment;
     public GameSegment CurrentSegment => currentSegmentIndex < gameSegments.Count ? gameSegments[currentSegmentIndex] : null;
+    
+    // Camera control methods
+    public int CurrentCameraIndex => currentCameraIndex;
+    public void SwitchToCameraManual(int cameraIndex)
+    {
+        SwitchToCamera(cameraIndex);
+    }
 }

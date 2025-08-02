@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4562793953940651351}
   - component: {fileID: 4074131989085801640}
   m_Layer: 0
-  m_Name: CinemachineCamera
+  m_Name: Camera01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 4387592700901375587}
   - component: {fileID: 2634778299716512380}
   m_Layer: 0
-  m_Name: CinemachineCamera (2)
+  m_Name: Camera03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -213,7 +213,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Priority:
     Enabled: 1
-    m_Value: 3
+    m_Value: 2
   OutputChannel: 1
   StandbyUpdate: 2
   m_StreamingVersion: 20241001
@@ -253,7 +253,7 @@ GameObject:
   - component: {fileID: 6622025195882981534}
   - component: {fileID: 7168944237304594991}
   m_Layer: 0
-  m_Name: CinemachineCamera (3)
+  m_Name: SceneCompleted
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -288,7 +288,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Priority:
     Enabled: 1
-    m_Value: 4
+    m_Value: 3
   OutputChannel: 1
   StandbyUpdate: 2
   m_StreamingVersion: 20241001
@@ -328,7 +328,7 @@ GameObject:
   - component: {fileID: 5757022735482252917}
   - component: {fileID: 2505998599495505123}
   m_Layer: 0
-  m_Name: CinemachineCamera (1)
+  m_Name: Camera02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -363,7 +363,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Priority:
     Enabled: 1
-    m_Value: 2
+    m_Value: 1
   OutputChannel: 1
   StandbyUpdate: 2
   m_StreamingVersion: 20241001

@@ -187,17 +187,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0aa66a06c37d949588853a753eb91232, type: 3}
---- !u!114 &528479447 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5527035100137487624, guid: c654c136181134a409a84f3e977abfed, type: 3}
-  m_PrefabInstance: {fileID: 6701077039419447904}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 966be9612b03d4fea890d1197f235a9a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &940687769
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -515,6 +504,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9586bc39c05bd4479a847cc98273c2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2030112840 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5015553595075815831, guid: 12ca939b6acd64039afcb2b871ae1a5d, type: 3}
+  m_PrefabInstance: {fileID: 6836749855132136491}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c26251a3e1f5ac41afa5ffb404c5f71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2077359125 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9129183680715622292, guid: c654c136181134a409a84f3e977abfed, type: 3}
+  m_PrefabInstance: {fileID: 6701077039419447904}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 966be9612b03d4fea890d1197f235a9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2132978763 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4086467015737253630, guid: c654c136181134a409a84f3e977abfed, type: 3}
@@ -653,16 +664,56 @@ PrefabInstance:
       value: MainGame
       objectReference: {fileID: 0}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: mixingCamera
+      value: 
+      objectReference: {fileID: 2030112840}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: cameraControl
       value: 
       objectReference: {fileID: 2030112839}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.data[0].segmentName
+      value: Frogs
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.data[1].segmentName
+      value: Couple
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.data[2].segmentName
+      value: Hippo
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.data[2].segmentEndDelay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.data[2].segmentStartDelay
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: gameSegments.Array.data[0].delayBetweenObjects
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.data[2].delayBetweenObjects
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: gameSegments.Array.data[0].interactiveObjects.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.data[1].interactiveObjects.Array.size
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.data[2].interactiveObjects.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: 'gameSegments.Array.data[0].interactiveObjects.Array.data[0]'
@@ -671,7 +722,7 @@ PrefabInstance:
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: 'gameSegments.Array.data[0].interactiveObjects.Array.data[1]'
       value: 
-      objectReference: {fileID: 528479447}
+      objectReference: {fileID: 1786170409}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: 'gameSegments.Array.data[0].interactiveObjects.Array.data[2]'
       value: 
@@ -688,6 +739,18 @@ PrefabInstance:
       propertyPath: 'gameSegments.Array.data[1].interactiveObjects.Array.data[1]'
       value: 
       objectReference: {fileID: 1786170409}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: 'gameSegments.Array.data[2].interactiveObjects.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2077359125}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: 'gameSegments.Array.data[2].interactiveObjects.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2077359125}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: 'gameSegments.Array.data[2].interactiveObjects.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2077359125}
     - target: {fileID: 4602106978438809263, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: m_LocalPosition.x
       value: 5.372717
