@@ -34,6 +34,11 @@ public class CameraControl : MonoBehaviour
         {
             SetWeights(2);
         }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            SetWeights(3);
+        }
     }
 
     private void SetWeights(int newIndex)
