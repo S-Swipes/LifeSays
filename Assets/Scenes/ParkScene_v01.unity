@@ -291,10 +291,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 405fe3e3acbe7410cab6e9442e00631a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frogControls:
-  - {fileID: 955669061}
-  - {fileID: 528479447}
-  - {fileID: 87179441}
+  gameSegments:
+  - segmentName: Couple
+    interactiveObjects:
+    - {fileID: 2132978763}
+    - {fileID: 1786170409}
+    delayBetweenObjects: 1
+    isCompleted: 0
+    segmentStartDelay: 1
+    segmentEndDelay: 1
+  - segmentName: Frogs
+    interactiveObjects:
+    - {fileID: 955669061}
+    - {fileID: 528479447}
+    - {fileID: 955669061}
+    - {fileID: 87179441}
+    delayBetweenObjects: 1
+    isCompleted: 0
+    segmentStartDelay: 1
+    segmentEndDelay: 1
+  delayBetweenSegments: 2
+  autoProgressSegments: 1
+  debugMode: 1
 --- !u!4 &491753319
 Transform:
   m_ObjectHideFlags: 0
@@ -691,6 +709,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e648af8063c44a5c8b648c48a8bc89c, type: 3}
+--- !u!114 &1786170409 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4791060561521211906, guid: c654c136181134a409a84f3e977abfed, type: 3}
+  m_PrefabInstance: {fileID: 6701077039419447904}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bff20a8633cd4b1d88ad8160599e63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1946811503
 GameObject:
   m_ObjectHideFlags: 0
@@ -933,6 +962,17 @@ MonoBehaviour:
       BarrelClipping: 0.25
       Anamorphism: 0
   BlendHint: 0
+--- !u!114 &2132978763 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4086467015737253630, guid: c654c136181134a409a84f3e977abfed, type: 3}
+  m_PrefabInstance: {fileID: 6701077039419447904}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bff20a8633cd4b1d88ad8160599e63d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6701077039419447904
 PrefabInstance:
   m_ObjectHideFlags: 0
