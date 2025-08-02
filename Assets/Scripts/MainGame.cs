@@ -218,10 +218,6 @@ public class MainGame : MonoBehaviour
         {
             // Correct click!
             currentObjectIndex++;
-            clickedMusicalObject.Play(true); // Give feedback
-            
-            if (debugMode)
-                Debug.Log($"Correct! Clicked object at position {currentObjectIndex-1}. Progress: {currentObjectIndex}/{currentRevealedLength}");
             
             // Check if player has completed the current revealed sequence
             if (currentObjectIndex >= currentRevealedLength)
@@ -230,7 +226,11 @@ public class MainGame : MonoBehaviour
                 if (currentRevealedLength >= segment.interactiveObjects.Count)
                 {
                     // Entire segment sequence completed!
-                    DOVirtual.DelayedCall(0.2f, () =>
+                    // First play the final click feedback
+                    clickedMusicalObject.Play(true);
+                    
+                    // Then after the active animation completes, show success
+                    DOVirtual.DelayedCall(1f, () => // Wait for Play() animation to complete (1s) + small buffer
                     {
                         // Permanently color all musical objects in this segment
                         foreach (var musicalObject in segment.interactiveObjects)
@@ -244,37 +244,47 @@ public class MainGame : MonoBehaviour
                         CompleteSegment(segmentIndex);
                     });
                 }
-                                 else
-                 {
-                     // Capture current revealed length before incrementing
-                     int completedSequenceLength = currentRevealedLength;
-                     
-                     // Successfully completed current revealed sequence - play happy anim on revealed objects
-                     DOVirtual.DelayedCall(0.2f, () =>
-                     {
-                         // Play happy animation for the musical objects that were just successfully completed
-                         for (int i = 0; i < completedSequenceLength; i++)
-                         {
-                             segment.interactiveObjects[i].PlayHappyTemporary();
-                         }
-                         
-                         if (debugMode)
-                             Debug.Log($"Revealed sequence of {completedSequenceLength} elements completed successfully! Playing happy animations.");
-                     });
-                     
-                     // Increase revealed length and replay sequence
-                     currentRevealedLength++;
-                     currentObjectIndex = 0;
-                     isWaitingForPlayerInput = false;
-                     
-                     if (debugMode)
-                         Debug.Log($"Sequence completed! Revealing {currentRevealedLength} elements now.");
-                     
-                     // Wait a longer moment then replay with more elements revealed
-                     DOVirtual.DelayedCall(2f, () => PlaySegmentSequence(segmentIndex));
-                 }
+                else
+                {
+                    // Not the final sequence, give individual feedback
+                    clickedMusicalObject.Play(true); // Give feedback
+                    
+                    // Capture current revealed length before incrementing
+                    int completedSequenceLength = currentRevealedLength;
+                    
+                    // Successfully completed current revealed sequence - play happy anim on revealed objects
+                    DOVirtual.DelayedCall(0.2f, () =>
+                    {
+                        // Play happy animation for the musical objects that were just successfully completed
+                        for (int i = 0; i < completedSequenceLength; i++)
+                        {
+                            segment.interactiveObjects[i].PlayHappyTemporary();
+                        }
+                        
+                        if (debugMode)
+                            Debug.Log($"Revealed sequence of {completedSequenceLength} elements completed successfully! Playing happy animations.");
+                    });
+                    
+                    // Increase revealed length and replay sequence
+                    currentRevealedLength++;
+                    currentObjectIndex = 0;
+                    isWaitingForPlayerInput = false;
+                    
+                    if (debugMode)
+                        Debug.Log($"Sequence completed! Revealing {currentRevealedLength} elements now.");
+                    
+                    // Wait a longer moment then replay with more elements revealed
+                    DOVirtual.DelayedCall(2f, () => PlaySegmentSequence(segmentIndex));
+                }
             }
-            // If not completed current sequence yet, just wait for next click
+            else
+            {
+                // Not completed current sequence yet, just give feedback and wait for next click
+                clickedMusicalObject.Play(true);
+            }
+            
+            if (debugMode)
+                Debug.Log($"Correct! Clicked object at position {currentObjectIndex-1}. Progress: {currentObjectIndex}/{currentRevealedLength}");
         }
         else
         {

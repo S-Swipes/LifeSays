@@ -17,6 +17,9 @@ public class MusicalObjectControl : MonoBehaviour
     public event Action OnClicked;  // 🔔 C# event
     public Animation Animation;
     public AudioSource AudioSource;
+    
+    [Header("Happy State Settings")]
+    public float happyStateDuration = 0.5f;
 
     
     void Start()
@@ -47,8 +50,8 @@ public class MusicalObjectControl : MonoBehaviour
         active.SetActive(false);
         Animation.Play("Happy_General");
         
-        // Reset after animation completes, restoring the previous colored state
-        playingTween = DOVirtual.DelayedCall(1, () => {
+        // Reset after the configured happy state duration, restoring the previous colored state
+        playingTween = DOVirtual.DelayedCall(happyStateDuration, () => {
             isColored = wasColored; // Restore previous state
             ResetState();
         });
@@ -112,7 +115,7 @@ public class MusicalObjectControl : MonoBehaviour
         
         if (!permanent)
         {
-            playingTween = DOVirtual.DelayedCall(1, ResetState);
+            playingTween = DOVirtual.DelayedCall(happyStateDuration, ResetState);
         }
         // If permanent is true, don't set up any reset tween - musical object stays happy forever
 
