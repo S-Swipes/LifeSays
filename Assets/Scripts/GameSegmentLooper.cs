@@ -38,6 +38,8 @@ public class GameSegmentLooper : MonoBehaviour
             Debug.Log("Segment completed, looping...");
         });
         
-        sequence.SetDelay(2f).SetLoops(-1).Play();
+        DOVirtual.DelayedCall(2f, () => {
+            sequence.SetLoops(-1).Play();
+        });
     }
 }
