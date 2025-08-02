@@ -38,6 +38,7 @@ public class GameSegmentLooper : MonoBehaviour
             Debug.Log("Segment completed, looping...");
         });
         
+        // WAIT FOR COMPLETION ANIMATION BEFORE STARTING LOOP
         DOVirtual.DelayedCall(2f, () => {
             sequence.SetLoops(-1).Play();
         });
