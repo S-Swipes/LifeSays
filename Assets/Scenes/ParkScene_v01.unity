@@ -569,16 +569,32 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1143161212}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: delayBetweenSegments
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: cameraTransitionDuration
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.data[1].isLooping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.data[1].isCompleted
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: gameSegments.Array.data[0].segmentEndDelay
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: gameSegments.Array.data[1].segmentEndDelay
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: gameSegments.Array.data[2].segmentEndDelay
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: gameSegments.Array.data[0].segmentStartDelay
@@ -586,11 +602,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: gameSegments.Array.data[1].segmentStartDelay
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: gameSegments.Array.data[2].segmentStartDelay
-      value: 3
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.data[0].delayBetweenObjects
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.data[0].interactiveObjects.Array.size
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: 'gameSegments.Array.data[0].interactiveObjects.Array.data[0]'
@@ -602,6 +626,10 @@ PrefabInstance:
       objectReference: {fileID: 528479447}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: 'gameSegments.Array.data[0].interactiveObjects.Array.data[2]'
+      value: 
+      objectReference: {fileID: 955669061}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: 'gameSegments.Array.data[0].interactiveObjects.Array.data[3]'
       value: 
       objectReference: {fileID: 87179441}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}

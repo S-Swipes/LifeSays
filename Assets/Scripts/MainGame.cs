@@ -14,8 +14,8 @@ public class GameSegment
     public bool isLooping = false; // Track if this segment is currently looping
     
     [Header("Segment Timing")]
-    public float segmentStartDelay = 0f;
-    public float segmentEndDelay = 1f;
+    public float totalDuration = 5f;
+    public float startDelay = 0f;
 }
 
 public class MainGame : MonoBehaviour
@@ -161,10 +161,10 @@ public class MainGame : MonoBehaviour
         OnSegmentStarted?.Invoke(segmentIndex);
         
         // Clamp segment start delay to prevent extremely long waits that could break the flow
-        float clampedStartDelay = Mathf.Clamp(segment.segmentStartDelay, 0f, 10f);
+        float clampedStartDelay = Mathf.Clamp(segment.startDelay, 0f, 10f);
         
-        if (debugMode && segment.segmentStartDelay != clampedStartDelay)
-            Debug.LogWarning($"Segment {segmentIndex} start delay clamped from {segment.segmentStartDelay}s to {clampedStartDelay}s to prevent timing issues");
+        if (debugMode && segment.startDelay != clampedStartDelay)
+            Debug.LogWarning($"Segment {segmentIndex} start delay clamped from {segment.startDelay}s to {clampedStartDelay}s to prevent timing issues");
         
         // Start playing the segment sequence after the segment start delay
         DOVirtual.DelayedCall(clampedStartDelay, () => PlaySegmentSequence(segmentIndex));
@@ -183,71 +183,88 @@ public class MainGame : MonoBehaviour
         }
         
         // Clamp delay values to prevent timing issues
-        float clampedStartDelay = Mathf.Clamp(segment.segmentStartDelay, 0f, 10f);
-        float clampedEndDelay = Mathf.Clamp(segment.segmentEndDelay, 0f, 10f);
+        float clampedStartDelay = Mathf.Clamp(segment.startDelay, 0f, 10f);
+        float objectsPlayTime = segment.interactiveObjects.Count * segment.delayBetweenObjects;
+        float clampedEndDelay = Mathf.Clamp(segment.totalDuration - clampedStartDelay - objectsPlayTime, 0f, 10f);
         
-        // Calculate the actual cycle time including all delays
-        float actualCycleTime = clampedStartDelay + 
-                               (segment.interactiveObjects.Count * segment.delayBetweenObjects) + 
-                               clampedEndDelay;
+        // Use the total duration as the actual cycle time
+        float actualCycleTime = segment.totalDuration;
         
         // For segments with high delays, use a simplified approach to avoid timing conflicts
         float startOffset = 0f;
         
-        // Only use complex synchronization for segments with reasonable delays (<=2 seconds total additional delay)
-        if (clampedStartDelay + clampedEndDelay <= 2f)
+        // Simple global master beat synchronization
+        // All segments sync to the same master timeline starting from game start
+        float timeSinceGameStart = Time.time - gameStartTime;
+        float nextGlobalBeat = Mathf.Ceil(timeSinceGameStart / masterBeatInterval) * masterBeatInterval;
+        float targetStartTime = nextGlobalBeat + clampedStartDelay;
+        startOffset = targetStartTime - timeSinceGameStart;
+        
+        // Ensure we have a minimum delay to avoid immediate starts
+        if (startOffset < 0.1f)
         {
-            // Original synchronization logic for normal delay values
-            float timeSinceGameStart = Time.time - gameStartTime;
-            float baseCycleTime = segment.interactiveObjects.Count * segment.delayBetweenObjects;
-            float cyclePosition = timeSinceGameStart % baseCycleTime;
-            startOffset = baseCycleTime - cyclePosition;
+            startOffset += masterBeatInterval;
         }
         
         if (debugMode)
         {
-            if (segment.segmentStartDelay != clampedStartDelay || segment.segmentEndDelay != clampedEndDelay)
-                Debug.LogWarning($"Segment {segmentIndex} delays clamped in loop - Start: {segment.segmentStartDelay}s->{clampedStartDelay}s, End: {segment.segmentEndDelay}s->{clampedEndDelay}s");
+            float originalEndDelay = segment.totalDuration - segment.startDelay - objectsPlayTime;
+            if (segment.startDelay != clampedStartDelay || originalEndDelay != clampedEndDelay)
+                Debug.LogWarning($"Segment {segmentIndex} delays clamped in loop - Start: {segment.startDelay}s->{clampedStartDelay}s, End: {originalEndDelay}s->{clampedEndDelay}s");
             
-            Debug.Log($"Starting loop for segment {segmentIndex} with cycle time: {actualCycleTime}s, start offset: {startOffset}s");
+            // Check if totalDuration is aligned with masterBeatInterval for better sync
+            float beatAlignment = segment.totalDuration % masterBeatInterval;
+            if (beatAlignment > 0.01f)
+                Debug.LogWarning($"Segment {segmentIndex} totalDuration ({segment.totalDuration}s) is not aligned with masterBeatInterval ({masterBeatInterval}s). Consider using multiples of masterBeatInterval for better sync.");
+            
+            Debug.Log($"Segment {segmentIndex}: timeSinceStart={timeSinceGameStart:F2}s, nextBeat={nextGlobalBeat:F2}s, targetStart={targetStartTime:F2}s, startOffset={startOffset:F2}s");
         }
         
         // Create new loop sequence
         Sequence loopSequence = DOTween.Sequence();
         
-        // Add initial offset for synchronization (only if reasonable)
-        if (startOffset > 0f && startOffset < actualCycleTime)
+        // Add initial sync offset (only for the first iteration)
+        if (startOffset > 0f)
         {
             loopSequence.AppendInterval(startOffset);
         }
         
+        // Create the repeating segment loop with exact totalDuration
+        Sequence segmentLoop = DOTween.Sequence();
+        
         // Add segment start delay
         if (clampedStartDelay > 0f)
         {
-            loopSequence.AppendInterval(clampedStartDelay);
+            segmentLoop.AppendInterval(clampedStartDelay);
         }
         
-        // Add the segment playback loop
+        // Add the segment playback
         for (int i = 0; i < segment.interactiveObjects.Count; i++)
         {
             int index = i;
-            loopSequence.AppendCallback(() => {
+            segmentLoop.AppendCallback(() => {
                 if (segment.interactiveObjects[index] != null)
                 {
                     segment.interactiveObjects[index].Play(true);
                 }
             });
-            loopSequence.AppendInterval(segment.delayBetweenObjects);
+            segmentLoop.AppendInterval(segment.delayBetweenObjects);
         }
         
         // Add segment end delay
         if (clampedEndDelay > 0f)
         {
-            loopSequence.AppendInterval(clampedEndDelay);
+            segmentLoop.AppendInterval(clampedEndDelay);
         }
         
-        // Set to loop infinitely and start
-        loopSequence.SetLoops(-1).Play();
+        // Set the segment loop to repeat infinitely
+        segmentLoop.SetLoops(-1);
+        
+        // Add the repeating segment loop to the main sequence
+        loopSequence.Append(segmentLoop);
+        
+        // Start the sequence
+        loopSequence.Play();
         
         // Store the sequence for later management
         segmentLoops[segmentIndex] = loopSequence;
@@ -561,12 +578,14 @@ public class MainGame : MonoBehaviour
         // Move to next segment after delay
         if (autoProgressSegments)
         {
-            // Clamp segment end delay to prevent extremely long waits that could break the flow
-            float clampedEndDelay = Mathf.Clamp(segment.segmentEndDelay, 0f, 10f);
+            // Calculate segment end delay based on total duration
+            float objectsPlayTime = segment.interactiveObjects.Count * segment.delayBetweenObjects;
+            float clampedEndDelay = Mathf.Clamp(segment.totalDuration - segment.startDelay - objectsPlayTime, 0f, 10f);
             float totalDelay = clampedEndDelay + delayBetweenSegments;
             
-            if (debugMode && segment.segmentEndDelay != clampedEndDelay)
-                Debug.LogWarning($"Segment {segmentIndex} end delay clamped from {segment.segmentEndDelay}s to {clampedEndDelay}s to prevent timing issues");
+            float originalEndDelay = segment.totalDuration - segment.startDelay - objectsPlayTime;
+            if (debugMode && originalEndDelay != clampedEndDelay)
+                Debug.LogWarning($"Segment {segmentIndex} end delay clamped from {originalEndDelay}s to {clampedEndDelay}s to prevent timing issues");
             
             DOVirtual.DelayedCall(totalDelay, () =>
             {

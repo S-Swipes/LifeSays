@@ -25,15 +25,19 @@ public class GameSegmentLooper : MonoBehaviour
             loopSequence.Kill();
         }
         
+        // Calculate end delay based on total duration
+        float objectsPlayTime = segment.interactiveObjects.Count * segment.delayBetweenObjects;
+        float endDelay = segment.totalDuration - segment.startDelay - objectsPlayTime;
+        
         // Play the segment
         Debug.Log("Playing segment: " + segment.segmentName + " with delay: " + segment.delayBetweenObjects + 
-                  ", start delay: " + segment.segmentStartDelay + 
-                  ", end delay: " + segment.segmentEndDelay + 
+                  ", start delay: " + segment.startDelay + 
+                  ", end delay: " + endDelay + 
                   ", start offset: " + startOffset);
         loopSequence = DOTween.Sequence();
         
         // Add initial start delay from segment timing
-        float totalStartDelay = segment.segmentStartDelay + startOffset;
+        float totalStartDelay = segment.startDelay + startOffset;
         if (totalStartDelay > 0f)
         {
             loopSequence.AppendInterval(totalStartDelay);
@@ -50,9 +54,9 @@ public class GameSegmentLooper : MonoBehaviour
         }
         
         // Add ending delay from segment timing before looping
-        if (segment.segmentEndDelay > 0f)
+        if (endDelay > 0f)
         {
-            loopSequence.AppendInterval(segment.segmentEndDelay);
+            loopSequence.AppendInterval(endDelay);
         }
         
         loopSequence.AppendCallback(() => {
