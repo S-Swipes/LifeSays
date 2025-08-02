@@ -629,6 +629,7 @@ public class MainGame : MonoBehaviour
         // Move camera to the next segment (if there are more segments)
         if (segmentIndex + 1 < gameSegments.Count)
         {
+            Debug.Log("%%% last segment go next cam");
             SwitchToNextCamera();
         }
         
@@ -654,6 +655,8 @@ public class MainGame : MonoBehaviour
     
     void SwitchToNextCamera()
     {
+        Debug.Log("%%%  next cam");
+
         if (mixingCamera == null)
         {
             Debug.LogWarning("MixingCamera reference not set!");
