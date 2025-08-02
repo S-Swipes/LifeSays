@@ -201,9 +201,25 @@ public class MainGame : MonoBehaviour
                         CompleteSegment(segmentIndex);
                     });
                 }
-                else
-                {
-                                         // Increase revealed length and replay sequence
+                                 else
+                 {
+                     // Capture current revealed length before incrementing
+                     int completedSequenceLength = currentRevealedLength;
+                     
+                     // Successfully completed current revealed sequence - play happy anim on revealed objects
+                     DOVirtual.DelayedCall(0.2f, () =>
+                     {
+                         // Play happy animation for the musical objects that were just successfully completed
+                         for (int i = 0; i < completedSequenceLength; i++)
+                         {
+                             segment.interactiveObjects[i].PlayHappyTemporary();
+                         }
+                         
+                         if (debugMode)
+                             Debug.Log($"Revealed sequence of {completedSequenceLength} elements completed successfully! Playing happy animations.");
+                     });
+                     
+                     // Increase revealed length and replay sequence
                      currentRevealedLength++;
                      currentObjectIndex = 0;
                      isWaitingForPlayerInput = false;
@@ -213,7 +229,7 @@ public class MainGame : MonoBehaviour
                      
                      // Wait a longer moment then replay with more elements revealed
                      DOVirtual.DelayedCall(2f, () => PlaySegmentSequence(segmentIndex));
-                }
+                 }
             }
             // If not completed current sequence yet, just wait for next click
         }
