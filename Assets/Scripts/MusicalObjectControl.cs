@@ -82,6 +82,7 @@ public class MusicalObjectControl : MonoBehaviour
         // ADD PLAYING SOUND
         active.SetActive(true);
         idle.SetActive(false);
+        Animation.Play("Active_General");
         playingTween = DOVirtual.DelayedCall(1, () => 
         {
             ResetState();
