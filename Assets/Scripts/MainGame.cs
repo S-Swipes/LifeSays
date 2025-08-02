@@ -53,15 +53,21 @@ public class MainGame : MonoBehaviour
         {
             var segment = gameSegments[segmentIndex];
             
-            // Setup click handlers for all interactive objects in this segment
-            for (int objectIndex = 0; objectIndex < segment.interactiveObjects.Count; objectIndex++)
+            // Get unique frogs in this segment to avoid duplicate click handlers
+            var uniqueFrogs = new HashSet<FrogControl>();
+            foreach (var frog in segment.interactiveObjects)
+            {
+                uniqueFrogs.Add(frog);
+            }
+            
+            // Setup click handlers only for unique frogs
+            foreach (var frog in uniqueFrogs)
             {
                 int capturedSegmentIndex = segmentIndex;
-                int capturedObjectIndex = objectIndex;
                 
-                segment.interactiveObjects[objectIndex].OnClicked += () =>
+                frog.OnClicked += () =>
                 {
-                    OnInteractiveObjectClicked(capturedSegmentIndex, capturedObjectIndex);
+                    OnInteractiveObjectClicked(capturedSegmentIndex, frog);
                 };
             }
             
@@ -126,25 +132,30 @@ public class MainGame : MonoBehaviour
         }
     }
 
-    void OnInteractiveObjectClicked(int segmentIndex, int objectIndex)
+    void OnInteractiveObjectClicked(int segmentIndex, FrogControl clickedFrog)
     {
         if (debugMode)
-            Debug.Log($"Interactive object clicked: Segment {segmentIndex}, Object {objectIndex}");
+            Debug.Log($"Interactive object clicked: Segment {segmentIndex}, Frog {clickedFrog.name}");
             
         // Handle click logic here - check if it's the correct sequence
         if (segmentIndex == currentSegmentIndex && isPlayingSegment)
         {
             var segment = gameSegments[segmentIndex];
-            if (objectIndex < segment.interactiveObjects.Count)
+            if (segment.interactiveObjects.Contains(clickedFrog))
             {
-                // Check if this is the next expected object in the sequence
-                if (objectIndex == currentObjectIndex)
+                // Find the index of the clicked frog in the segment's interactive objects
+                int clickedFrogIndex = segment.interactiveObjects.IndexOf(clickedFrog);
+
+                // Check if this is the expected frog at the current position in the sequence
+                var expectedFrog = segment.interactiveObjects[currentObjectIndex];
+                
+                if (clickedFrog == expectedFrog)
                 {
-                    // Correct sequence - advance to next expected object
+                    // Correct sequence - advance to next expected position
                     currentObjectIndex++;
                     
                     if (debugMode)
-                        Debug.Log($"Correct! Object {objectIndex} clicked in correct order. Next expected: {currentObjectIndex}");
+                        Debug.Log($"Correct! Expected frog at position {currentObjectIndex-1} clicked. Next expected position: {currentObjectIndex}");
                     
                     // Check if this was the last object in the sequence
                     if (currentObjectIndex >= segment.interactiveObjects.Count)
@@ -170,10 +181,10 @@ public class MainGame : MonoBehaviour
                     else
                     {
                         // Correct click but sequence not finished yet - give temporary feedback
-                        segment.interactiveObjects[objectIndex].Play(true);
+                        clickedFrog.Play(true);
                         
                         if (debugMode)
-                            Debug.Log($"Correct click {objectIndex}, waiting for sequence completion...");
+                            Debug.Log($"Correct click {clickedFrogIndex}, waiting for sequence completion...");
                     }
                 }
                 else
@@ -181,12 +192,12 @@ public class MainGame : MonoBehaviour
                     // Wrong sequence - play wrong animations and reset sequence
                     
                     // Play wrong selected animation on the clicked frog
-                    segment.interactiveObjects[objectIndex].PlayWrongSelected();
+                    clickedFrog.PlayWrongSelected();
                     
                     // Play wrong reset animation on all other frogs in the segment
                     for (int i = 0; i < segment.interactiveObjects.Count; i++)
                     {
-                        if (i != objectIndex) // Skip the clicked frog
+                        if (segment.interactiveObjects[i] != clickedFrog) // Skip the clicked frog
                         {
                             segment.interactiveObjects[i].PlayWrongReset();
                         }
@@ -195,7 +206,7 @@ public class MainGame : MonoBehaviour
                     currentObjectIndex = 0; // Reset sequence on wrong click
                     
                     if (debugMode)
-                        Debug.Log($"Wrong! Object {objectIndex} clicked, but expected {currentObjectIndex}. Sequence reset.");
+                        Debug.Log($"Wrong! Clicked frog {clickedFrogIndex}, but expected frog at position {currentObjectIndex}. Sequence reset.");
                 }
             }
         }
