@@ -212,7 +212,7 @@ public class MainGame : MonoBehaviour
                          Debug.Log($"Sequence completed! Revealing {currentRevealedLength} elements now.");
                      
                      // Wait a longer moment then replay with more elements revealed
-                     DOVirtual.DelayedCall(4f, () => PlaySegmentSequence(segmentIndex));
+                     DOVirtual.DelayedCall(2f, () => PlaySegmentSequence(segmentIndex));
                 }
             }
             // If not completed current sequence yet, just wait for next click
