@@ -543,13 +543,13 @@ public class MainGame : MonoBehaviour
         }
         
         float currentTime = Time.time;
-        float BAR_TIME = 4;
-        float timePassedSinceStartLoop = (currentTime - sequencePlayStartTime)%BAR_TIME; // (14) 17.9 => 3.9 
+        float currentSegmentDuration = gameSegments[currentSegmentIndex].totalDuration;
+        float timePassedSinceStartLoop = (currentTime - sequencePlayStartTime)%currentSegmentDuration; // (14) 17.9 => 3.9 
         float expectedTime = expectedClickTimes[clickedObjectIndex]; //  relative 0 1 2 3
         
         // 
         float timingDifferenceUp = Mathf.Abs(timePassedSinceStartLoop - expectedTime);
-        float timingDifferenceDown = Mathf.Abs(timingDifferenceUp - BAR_TIME);
+        float timingDifferenceDown = Mathf.Abs(timingDifferenceUp - currentSegmentDuration);
         
         float timingDifference = Mathf.Min(timingDifferenceUp, timingDifferenceDown);
         
