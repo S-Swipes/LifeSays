@@ -51,11 +51,12 @@ MonoBehaviour:
     - {fileID: 0}
     - {fileID: 0}
     - {fileID: 0}
+    - {fileID: 0}
     delayBetweenObjects: 1
     isCompleted: 0
     isLooping: 0
-    segmentStartDelay: 1
-    segmentEndDelay: 0
+    totalDuration: 4
+    startDelay: 0
   - segmentName: Couple
     interactiveObjects:
     - {fileID: 0}
@@ -63,21 +64,21 @@ MonoBehaviour:
     delayBetweenObjects: 1
     isCompleted: 0
     isLooping: 0
-    segmentStartDelay: 2
-    segmentEndDelay: 2
+    totalDuration: 4
+    startDelay: 1
   - segmentName: Hippo
     interactiveObjects:
     - {fileID: 0}
     delayBetweenObjects: 1
     isCompleted: 0
     isLooping: 0
-    segmentStartDelay: 3
-    segmentEndDelay: 3
-  delayBetweenSegments: 1
+    totalDuration: 8
+    startDelay: 2
+  delayBetweenSegments: 0
   autoProgressSegments: 1
   masterBeatInterval: 1
   mixingCamera: {fileID: 0}
-  cameraTransitionDuration: 2
+  cameraTransitionDuration: 1
   vfxController: {fileID: 0}
   perfectTimingWindow: 0.15
   goodTimingWindow: 0.3
