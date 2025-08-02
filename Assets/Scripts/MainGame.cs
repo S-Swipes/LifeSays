@@ -273,9 +273,15 @@ public class MainGame : MonoBehaviour
     void CompleteSegment(int segmentIndex)
     {
         if (segmentIndex >= gameSegments.Count) return;
-        //  move camera to the next segment
-        GetComponent<GameSegmentLooper>().PlaySegment(gameSegments[segmentIndex]);
+        
         var segment = gameSegments[segmentIndex];
+        
+        // Add a 1-second delay before calling Game Segment Looper
+        DOVirtual.DelayedCall(1f, () =>
+        {
+            //  move camera to the next segment
+            GetComponent<GameSegmentLooper>().PlaySegment(gameSegments[segmentIndex]);
+        });
         segment.isCompleted = true;
         isPlayingSegment = false;
         

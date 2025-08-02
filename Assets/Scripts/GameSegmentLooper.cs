@@ -18,7 +18,7 @@ public class GameSegmentLooper : MonoBehaviour
     public void PlaySegment(GameSegment segment)
     {
         // Play the segment
-        Debug.Log("Playing segment: " + segment.segmentName);
+        Debug.Log("Playing segment: " + segment.segmentName + " with delay: " + segment.delayBetweenObjects);
         Sequence sequence = DOTween.Sequence();
         
         for (int i = 0; i < segment.interactiveObjects.Count; i++)
@@ -28,7 +28,7 @@ public class GameSegmentLooper : MonoBehaviour
                 Debug.Log("Playing interactive object: " + index);    
                 segment.interactiveObjects[index].Play(true);
             });
-            sequence.AppendInterval(1);
+            sequence.AppendInterval(segment.delayBetweenObjects);
             
         }
         

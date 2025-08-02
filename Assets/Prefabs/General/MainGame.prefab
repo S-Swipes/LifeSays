@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &322332523547759522
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4602106978438809263}
+  - component: {fileID: 4159280371904691296}
+  - component: {fileID: 8111234863302480353}
+  m_Layer: 0
+  m_Name: MainGame
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4602106978438809263
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 322332523547759522}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.372717, y: -1.5969371, z: -17.92335}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4159280371904691296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 322332523547759522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 405fe3e3acbe7410cab6e9442e00631a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameSegments:
+  - segmentName: Frogs
+    interactiveObjects:
+    - {fileID: 0}
+    - {fileID: 0}
+    delayBetweenObjects: 1
+    isCompleted: 0
+    segmentStartDelay: 1
+    segmentEndDelay: 1
+  - segmentName: Couple
+    interactiveObjects:
+    - {fileID: 0}
+    - {fileID: 0}
+    delayBetweenObjects: 1
+    isCompleted: 0
+    segmentStartDelay: 1
+    segmentEndDelay: 1
+  delayBetweenSegments: 2
+  autoProgressSegments: 1
+  debugMode: 1
+--- !u!114 &8111234863302480353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 322332523547759522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77f7a0edfe92f4518abcad697c135bca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DelayBetweenObject_float: 1
