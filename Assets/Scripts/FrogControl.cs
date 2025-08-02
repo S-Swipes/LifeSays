@@ -40,7 +40,7 @@ public class FrogControl : MonoBehaviour
         Play(true);
     }
 
-    public void Play(bool Colored = false)
+    public void Play(bool Colored = false, Action onComplete = null)
     {
         Debug.Log("Play colored: " + Colored);
         if (playingTween != null)
@@ -56,11 +56,21 @@ public class FrogControl : MonoBehaviour
         // ADD PLAYING SOUND
         active.SetActive(true);
         idle.SetActive(false);
-        playingTween = DOVirtual.DelayedCall(1, ResetState);
+        playingTween = DOVirtual.DelayedCall(1, () => 
+        {
+            ResetState();
+            onComplete?.Invoke(); // Call the completion callback if provided
+        });
     }
 
-    public void SetColored()
+    public void SetColored(bool permanent = false)
     {
+        // Kill any existing tween to prevent conflicts
+        if (playingTween != null)
+        {
+            playingTween.Kill();
+        }
+        
         //Set the frog to colored
         isColored = true;
         happy.SetActive(true);
@@ -72,7 +82,12 @@ public class FrogControl : MonoBehaviour
         idleEmpty.SetActive(false);
         */
         Animation.Play("Happy_General");
-        playingTween = DOVirtual.DelayedCall(1, ResetState);
+        
+        if (!permanent)
+        {
+            playingTween = DOVirtual.DelayedCall(1, ResetState);
+        }
+        // If permanent is true, don't set up any reset tween - frog stays happy forever
 
     }
 

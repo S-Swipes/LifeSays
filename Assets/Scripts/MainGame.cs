@@ -149,19 +149,16 @@ public class MainGame : MonoBehaviour
                     // Check if this was the last object in the sequence
                     if (currentObjectIndex >= segment.interactiveObjects.Count)
                     {
-                        // Last frog clicked correctly - give temporary feedback first
-                        segment.interactiveObjects[objectIndex].Play(true);
-                        
                         if (debugMode)
-                            Debug.Log($"Sequence completed! Coloring all frogs in segment {segmentIndex} after delay...");
+                            Debug.Log($"Sequence completed! Making all frogs permanently happy...");
                         
-                        // Add delay before permanently coloring all frogs (wait for temporary animation to finish)
-                        DOVirtual.DelayedCall(1.01f, () =>
+                        // Small delay for immediate feedback, then permanently color all frogs
+                        DOVirtual.DelayedCall(0.2f, () =>
                         {
                             // Sequence completed successfully - permanently color ALL frogs in this segment
                             foreach (var frog in segment.interactiveObjects)
                             {
-                                frog.SetColored();
+                                frog.SetColored(permanent: true);
                             }
                             
                             if (debugMode)
