@@ -55,7 +55,7 @@ MonoBehaviour:
     isCompleted: 0
     isLooping: 0
     segmentStartDelay: 1
-    segmentEndDelay: 1
+    segmentEndDelay: 0
   - segmentName: Couple
     interactiveObjects:
     - {fileID: 0}
@@ -71,13 +71,17 @@ MonoBehaviour:
     delayBetweenObjects: 1
     isCompleted: 0
     isLooping: 0
-    segmentStartDelay: 4
-    segmentEndDelay: 4
+    segmentStartDelay: 3
+    segmentEndDelay: 3
   delayBetweenSegments: 1
   autoProgressSegments: 1
   masterBeatInterval: 1
   mixingCamera: {fileID: 0}
   cameraTransitionDuration: 2
+  vfxController: {fileID: 0}
+  perfectTimingWindow: 0.15
+  goodTimingWindow: 0.3
+  okTimingWindow: 0.5
   debugMode: 1
 --- !u!114 &8111234863302480353
 MonoBehaviour:

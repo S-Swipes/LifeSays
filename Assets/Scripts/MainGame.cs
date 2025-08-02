@@ -34,6 +34,17 @@ public class MainGame : MonoBehaviour
     public CinemachineMixingCamera mixingCamera;
     public float cameraTransitionDuration = 2f;
     
+    [Header("VFX System")]
+    public VFXController vfxController;
+    
+    [Header("Timing Precision Settings")]
+    [Tooltip("Time window in seconds for Perfect timing")]
+    public float perfectTimingWindow = 0.15f;
+    [Tooltip("Time window in seconds for Good timing")]
+    public float goodTimingWindow = 0.3f;
+    [Tooltip("Time window in seconds for OK timing")]
+    public float okTimingWindow = 0.5f;
+    
     [Header("Debug")]
     public bool debugMode = true;
     
@@ -46,6 +57,10 @@ public class MainGame : MonoBehaviour
     private int currentCameraIndex = 0;
     private float gameStartTime; // Track when the game started for master timing
     private Dictionary<int, Sequence> segmentLoops = new Dictionary<int, Sequence>(); // Track individual segment loops
+    
+    // Timing precision tracking
+    private float sequencePlayStartTime; // When the current sequence started playing
+    private List<float> expectedClickTimes = new List<float>(); // When each object should be clicked
     
     // Events
     public event Action<int> OnSegmentStarted;
@@ -281,6 +296,21 @@ public class MainGame : MonoBehaviour
         if (debugMode)
             Debug.Log($"Playing sequence: showing {elementsToPlay} out of {segment.interactiveObjects.Count} elements");
         
+        // Calculate expected click times for timing precision
+        expectedClickTimes.Clear();
+        float totalSequenceTime = (elementsToPlay - 1) * segment.delayBetweenObjects + 1f; // +1 for last object play time
+        sequencePlayStartTime = Time.time + totalSequenceTime; // Player input starts after sequence finishes
+        
+        for (int i = 0; i < elementsToPlay; i++)
+        {
+            // Expected click time is when the sequence finishes + delay for this object
+            float expectedClickTime = sequencePlayStartTime + (i * segment.delayBetweenObjects);
+            expectedClickTimes.Add(expectedClickTime);
+        }
+        
+        if (debugMode)
+            Debug.Log($"Expected click times calculated. Sequence will start accepting input at: {sequencePlayStartTime}");
+        
         // Play each object in the revealed portion of the sequence with delays
         for (int i = 0; i < elementsToPlay; i++)
         {
@@ -300,7 +330,6 @@ public class MainGame : MonoBehaviour
         }
         
         // After the sequence finishes playing, wait for player input
-        float totalSequenceTime = (elementsToPlay - 1) * segment.delayBetweenObjects + 1f; // +1 for last object play time
         DOVirtual.DelayedCall(totalSequenceTime, () =>
         {
             isWaitingForPlayerInput = true;
@@ -331,8 +360,11 @@ public class MainGame : MonoBehaviour
         
         if (clickedMusicalObject == expectedMusicalObject)
         {
-            // Correct click!
+            // Correct click! Now evaluate timing precision
             currentObjectIndex++;
+            
+            // Calculate timing accuracy
+            string timingFeedback = EvaluateTimingAccuracy(currentObjectIndex - 1);
             
             // Check if player has completed the current revealed sequence
             if (currentObjectIndex >= currentRevealedLength)
@@ -343,6 +375,9 @@ public class MainGame : MonoBehaviour
                     // Entire segment sequence completed!
                     // First play the final click feedback
                     clickedMusicalObject.Play(true);
+                    
+                    // Show timing-based VFX feedback
+                    ShowTimingVFX(timingFeedback, clickedMusicalObject.transform.position);
                     
                     // Then after the active animation completes, show success
                     DOVirtual.DelayedCall(1f, () => // Wait for Play() animation to complete (1s) + small buffer
@@ -363,6 +398,9 @@ public class MainGame : MonoBehaviour
                 {
                     // Not the final sequence, give individual feedback
                     clickedMusicalObject.Play(true); // Give feedback
+                    
+                    // Show timing-based VFX feedback
+                    ShowTimingVFX(timingFeedback, clickedMusicalObject.transform.position);
                     
                     // Capture current revealed length before incrementing
                     int completedSequenceLength = currentRevealedLength;
@@ -396,15 +434,24 @@ public class MainGame : MonoBehaviour
             {
                 // Not completed current sequence yet, just give feedback and wait for next click
                 clickedMusicalObject.Play(true);
+                
+                // Show timing-based VFX feedback
+                ShowTimingVFX(timingFeedback, clickedMusicalObject.transform.position);
             }
             
             if (debugMode)
-                Debug.Log($"Correct! Clicked object at position {currentObjectIndex-1}. Progress: {currentObjectIndex}/{currentRevealedLength}");
+                Debug.Log($"Correct! Clicked object at position {currentObjectIndex-1}. Progress: {currentObjectIndex}/{currentRevealedLength}. Timing: {timingFeedback}");
         }
         else
         {
             // Wrong click! Reset current attempt and replay current sequence
             clickedMusicalObject.PlayWrongSelected();
+            
+            // Show wrong VFX feedback
+            if (vfxController != null)
+            {
+                vfxController.ShowWrongFeedback(clickedMusicalObject.transform.position);
+            }
             
             // Play wrong reset animation on other objects
             for (int i = 0; i < segment.interactiveObjects.Count; i++)
@@ -423,6 +470,66 @@ public class MainGame : MonoBehaviour
             
             // Wait a moment then replay current sequence
             DOVirtual.DelayedCall(2f, () => PlaySegmentSequence(segmentIndex));
+        }
+    }
+
+    string EvaluateTimingAccuracy(int clickedObjectIndex)
+    {
+        if (clickedObjectIndex < 0 || clickedObjectIndex >= expectedClickTimes.Count)
+        {
+            return "Unknown";
+        }
+        
+        float currentTime = Time.time;
+        float expectedTime = expectedClickTimes[clickedObjectIndex];
+        float timingDifference = Mathf.Abs(currentTime - expectedTime);
+        
+        if (debugMode)
+            Debug.Log($"Timing evaluation - Current: {currentTime:F3}, Expected: {expectedTime:F3}, Difference: {timingDifference:F3}");
+        
+        if (timingDifference <= perfectTimingWindow)
+        {
+            return "Perfect";
+        }
+        else if (timingDifference <= goodTimingWindow)
+        {
+            return "Good";
+        }
+        else if (timingDifference <= okTimingWindow)
+        {
+            return "OK";
+        }
+        else
+        {
+            return "Late";
+        }
+    }
+    
+    void ShowTimingVFX(string timingFeedback, Vector3 position)
+    {
+        if (vfxController == null)
+        {
+            if (debugMode)
+                Debug.LogWarning("VFXController not assigned! Cannot show timing feedback.");
+            return;
+        }
+        
+        switch (timingFeedback)
+        {
+            case "Perfect":
+                vfxController.ShowPerfectFeedback(position);
+                break;
+            case "Good":
+                vfxController.ShowGoodFeedback(position);
+                break;
+            case "OK":
+                vfxController.ShowOkFeedback(position);
+                break;
+            default:
+                // For "Late" or other cases, don't show positive feedback
+                if (debugMode)
+                    Debug.Log($"No VFX shown for timing feedback: {timingFeedback}");
+                break;
         }
     }
 
