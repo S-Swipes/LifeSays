@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 public class GameSegmentLooper : MonoBehaviour
@@ -18,5 +19,25 @@ public class GameSegmentLooper : MonoBehaviour
     {
         // Play the segment
         Debug.Log("Playing segment: " + segment.segmentName);
+        Sequence sequence = DOTween.Sequence();
+        
+        for (int i = 0; i < segment.interactiveObjects.Count; i++)
+        {
+            int index = i;  
+            sequence.AppendCallback(() => {
+                Debug.Log("Playing interactive object: " + index);    
+                segment.interactiveObjects[index].Play(true);
+            });
+            sequence.AppendInterval(1);
+            
+        }
+        
+        
+        
+        sequence.AppendCallback(() => {
+            Debug.Log("Segment completed, looping...");
+        });
+        
+        sequence.SetDelay(2f).SetLoops(-1).Play();
     }
 }
