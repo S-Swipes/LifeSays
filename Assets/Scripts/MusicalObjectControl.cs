@@ -16,6 +16,7 @@ public class MusicalObjectControl : MonoBehaviour
     private Tween playingTween;
     public event Action OnClicked;  // 🔔 C# event
     public Animation Animation;
+    public AudioSource AudioSource;
 
     
     void Start()
@@ -42,6 +43,8 @@ public class MusicalObjectControl : MonoBehaviour
     public void Play(bool Colored = false, Action onComplete = null)
     {
         Debug.Log("Play colored: " + Colored);
+        AudioSource.Play();
+
         if (playingTween != null)
         {
             playingTween.Kill();
@@ -59,30 +62,6 @@ public class MusicalObjectControl : MonoBehaviour
         {
             ResetState();
             onComplete?.Invoke(); // Call the completion callback if provided
-        });
-    }
-
-    public void PlayHappyTemporary()
-    {
-        // Kill any existing tween to prevent conflicts
-        if (playingTween != null)
-        {
-            playingTween.Kill();
-        }
-        
-        // Store current colored state to restore it later
-        bool wasColored = isColored;
-        
-        // Play happy animation temporarily without changing permanent colored state
-        happy.SetActive(true);
-        idle.SetActive(false);
-        active.SetActive(false);
-        Animation.Play("Happy_General");
-        
-        // Reset after animation completes, restoring the previous colored state
-        playingTween = DOVirtual.DelayedCall(1, () => {
-            isColored = wasColored; // Restore previous state
-            ResetState();
         });
     }
 
