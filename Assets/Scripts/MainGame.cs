@@ -169,14 +169,29 @@ public class MainGame : MonoBehaviour
                     }
                     else
                     {
-                        // Correct click but sequence not finished yet - just temporarily show feedback
+                        // Correct click but sequence not finished yet - give temporary feedback
                         segment.interactiveObjects[objectIndex].Play(true);
+                        
+                        if (debugMode)
+                            Debug.Log($"Correct click {objectIndex}, waiting for sequence completion...");
                     }
                 }
                 else
                 {
-                    // Wrong sequence - only temporarily color the frog and reset sequence
-                    segment.interactiveObjects[objectIndex].Play(true);
+                    // Wrong sequence - play wrong animations and reset sequence
+                    
+                    // Play wrong selected animation on the clicked frog
+                    segment.interactiveObjects[objectIndex].PlayWrongSelected();
+                    
+                    // Play wrong reset animation on all other frogs in the segment
+                    for (int i = 0; i < segment.interactiveObjects.Count; i++)
+                    {
+                        if (i != objectIndex) // Skip the clicked frog
+                        {
+                            segment.interactiveObjects[i].PlayWrongReset();
+                        }
+                    }
+                    
                     currentObjectIndex = 0; // Reset sequence on wrong click
                     
                     if (debugMode)

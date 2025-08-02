@@ -37,7 +37,6 @@ public class FrogControl : MonoBehaviour
     void OnMouseDown()
     {
         OnClicked?.Invoke();
-        Play(true);
     }
 
     public void Play(bool Colored = false, Action onComplete = null)
@@ -89,6 +88,36 @@ public class FrogControl : MonoBehaviour
         }
         // If permanent is true, don't set up any reset tween - frog stays happy forever
 
+    }
+
+    public void PlayWrongSelected()
+    {
+        // Kill any existing tween to prevent conflicts
+        if (playingTween != null)
+        {
+            playingTween.Kill();
+        }
+        
+        // Play wrong selected animation for the clicked wrong frog
+        Animation.Play("WrongSelected");
+        
+        // Reset after animation completes
+        playingTween = DOVirtual.DelayedCall(1, ResetState);
+    }
+
+    public void PlayWrongReset()
+    {
+        // Kill any existing tween to prevent conflicts
+        if (playingTween != null)
+        {
+            playingTween.Kill();
+        }
+        
+        // Play wrong reset animation for other frogs
+        Animation.Play("WrongReset");
+        
+        // Reset after animation completes
+        playingTween = DOVirtual.DelayedCall(1, ResetState);
     }
 
     public void ResetState()
