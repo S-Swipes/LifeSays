@@ -62,6 +62,9 @@ public class MainGame : MonoBehaviour
     private float sequencePlayStartTime; // When the current sequence started playing
     private List<float> expectedClickTimes = new List<float>(); // When each object should be clicked
     
+    // Timing indicator system
+    private bool lastTimingIndicatorState = false; // Track if timing indicator was active in previous frame
+    
     // Events
     public event Action<int> OnSegmentStarted;
     public event Action<int> OnSegmentCompleted;
@@ -71,6 +74,66 @@ public class MainGame : MonoBehaviour
     {
         InitializeCamera();
         InitializeGame();
+    }
+    
+    void Update()
+    {
+        // Check if we should show timing indicator animation
+        if (isWaitingForPlayerInput && currentSegmentIndex < gameSegments.Count)
+        {
+            var segment = gameSegments[currentSegmentIndex];
+            
+            // Check if we have a valid object to indicate timing for
+            if (currentObjectIndex < segment.interactiveObjects.Count && currentObjectIndex < expectedClickTimes.Count)
+            {
+                // Calculate if we're in the timing window for the current expected object
+                bool shouldShowTimingIndicator = IsInTimingWindow(currentObjectIndex);
+                
+                // Only play animation if timing indicator state changed (to avoid spam)
+                if (shouldShowTimingIndicator && !lastTimingIndicatorState)
+                {
+                    var musicalObject = segment.interactiveObjects[currentObjectIndex];
+                    if (musicalObject != null)
+                    {
+                        musicalObject.PlayTimingIndicatorAnimation();
+                        if (debugMode)
+                            Debug.Log($"Showing timing indicator for object {currentObjectIndex}");
+                    }
+                }
+                
+                lastTimingIndicatorState = shouldShowTimingIndicator;
+            }
+        }
+        else
+        {
+            lastTimingIndicatorState = false;
+        }
+    }
+    
+    bool IsInTimingWindow(int objectIndex)
+    {
+        if (objectIndex < 0 || objectIndex >= expectedClickTimes.Count)
+            return false;
+            
+        // Use the exact same timing calculation as EvaluateTimingAccuracy
+        float currentTime = Time.time;
+        float currentSegmentDuration = gameSegments[currentSegmentIndex].totalDuration;
+        float timePassedSinceStartLoop = (currentTime - sequencePlayStartTime) % currentSegmentDuration;
+        float expectedTime = expectedClickTimes[objectIndex];
+        
+        // Calculate timing difference (same logic as EvaluateTimingAccuracy)
+        float timingDifferenceUp = Mathf.Abs(timePassedSinceStartLoop - expectedTime);
+        float timingDifferenceDown = Mathf.Abs(timingDifferenceUp - currentSegmentDuration);
+        float timingDifference = Mathf.Min(timingDifferenceUp, timingDifferenceDown);
+        
+        if (debugMode && timingDifference <= goodTimingWindow)
+        {
+            Debug.Log($"Timing indicator for object {objectIndex}: timePassedSinceStartLoop={timePassedSinceStartLoop:F3}, " +
+                     $"expectedTime={expectedTime:F3}, timingDifference={timingDifference:F3}");
+        }
+        
+        // Show timing indicator during the "good" timing window
+        return timingDifference <= goodTimingWindow;
     }
     
     void InitializeCamera()
@@ -723,6 +786,9 @@ public class MainGame : MonoBehaviour
         }
         segmentLoops.Clear();
         
+        // Clean up segment start time tracking
+        // segmentLoopStartTimes.Clear(); // This line is removed
+        
         // Reset master timing - it will start when first segment begins looping
         gameStartTime = 0f;
         
@@ -788,6 +854,9 @@ public class MainGame : MonoBehaviour
             kvp.Value.Kill();
         }
         segmentLoops.Clear();
+        
+        // Clean up segment start time tracking
+        // segmentLoopStartTimes.Clear(); // This line is removed
         
         foreach (var segment in gameSegments)
         {

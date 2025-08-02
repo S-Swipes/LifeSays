@@ -151,6 +151,16 @@ public class MusicalObjectControl : MonoBehaviour
         playingTween = DOVirtual.DelayedCall(1, ResetState);
     }
 
+    public void PlayTimingIndicatorAnimation()
+    {
+        // Play just the Active_General animation without changing visual state
+        // This serves as a visual cue for timing
+        if (Animation != null)
+        {
+            Animation.Play("Active_General");
+        }
+    }
+
     public void ResetState()
     {
         //Reset the musical object to colored
