@@ -50,8 +50,10 @@ MonoBehaviour:
     interactiveObjects:
     - {fileID: 0}
     - {fileID: 0}
+    - {fileID: 0}
     delayBetweenObjects: 1
     isCompleted: 0
+    isLooping: 0
     segmentStartDelay: 1
     segmentEndDelay: 1
   - segmentName: Couple
@@ -60,10 +62,22 @@ MonoBehaviour:
     - {fileID: 0}
     delayBetweenObjects: 1
     isCompleted: 0
-    segmentStartDelay: 1
-    segmentEndDelay: 1
-  delayBetweenSegments: 2
+    isLooping: 0
+    segmentStartDelay: 2
+    segmentEndDelay: 2
+  - segmentName: Hippo
+    interactiveObjects:
+    - {fileID: 0}
+    delayBetweenObjects: 1
+    isCompleted: 0
+    isLooping: 0
+    segmentStartDelay: 4
+    segmentEndDelay: 4
+  delayBetweenSegments: 1
   autoProgressSegments: 1
+  masterBeatInterval: 1
+  mixingCamera: {fileID: 0}
+  cameraTransitionDuration: 2
   debugMode: 1
 --- !u!114 &8111234863302480353
 MonoBehaviour:
@@ -77,4 +91,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77f7a0edfe92f4518abcad697c135bca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DelayBetweenObject_float: 1
