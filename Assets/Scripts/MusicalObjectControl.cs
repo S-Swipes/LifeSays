@@ -3,7 +3,7 @@ using DG.Tweening;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class FrogControl : MonoBehaviour
+public class MusicalObjectControl : MonoBehaviour
 {
     public GameObject idle;
     public GameObject active;
@@ -70,7 +70,7 @@ public class FrogControl : MonoBehaviour
             playingTween.Kill();
         }
         
-        //Set the frog to colored
+        //Set the musical object to colored
         isColored = true;
         happy.SetActive(true);
         idle.SetActive(false);
@@ -86,7 +86,7 @@ public class FrogControl : MonoBehaviour
         {
             playingTween = DOVirtual.DelayedCall(1, ResetState);
         }
-        // If permanent is true, don't set up any reset tween - frog stays happy forever
+        // If permanent is true, don't set up any reset tween - musical object stays happy forever
 
     }
 
@@ -98,7 +98,7 @@ public class FrogControl : MonoBehaviour
             playingTween.Kill();
         }
         
-        // Play wrong selected animation for the clicked wrong frog
+        // Play wrong selected animation for the clicked wrong musical object
         Animation.Play("WrongSelected");
         
         // Reset after animation completes
@@ -113,7 +113,7 @@ public class FrogControl : MonoBehaviour
             playingTween.Kill();
         }
         
-        // Play wrong reset animation for other frogs
+        // Play wrong reset animation for other musical objects
         Animation.Play("WrongReset");
         
         // Reset after animation completes
@@ -122,15 +122,15 @@ public class FrogControl : MonoBehaviour
 
     public void ResetState()
     {
-        //Reset the frog to colored
+        //Reset the musical object to colored
         activeColored.SetActive(isColored);
         activeEmpty.SetActive(!isColored);
         idleColored.SetActive(isColored);
         idleEmpty.SetActive(!isColored);
 
-        //Reset the frog to idle
+        //Reset the musical object to idle
         idle.SetActive(true);
         active.SetActive(false);
         happy.SetActive(false);
     }
-}
+} 

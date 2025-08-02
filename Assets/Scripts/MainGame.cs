@@ -7,7 +7,7 @@ using System;
 public class GameSegment
 {
     public string segmentName;
-    public List<FrogControl> interactiveObjects = new List<FrogControl>();
+    public List<MusicalObjectControl> interactiveObjects = new List<MusicalObjectControl>();
     public float delayBetweenObjects = 1f;
     public bool isCompleted = false;
     
@@ -53,21 +53,21 @@ public class MainGame : MonoBehaviour
         {
             var segment = gameSegments[segmentIndex];
             
-            // Get unique frogs in this segment to avoid duplicate click handlers
-            var uniqueFrogs = new HashSet<FrogControl>();
-            foreach (var frog in segment.interactiveObjects)
+            // Get unique musical objects in this segment to avoid duplicate click handlers
+            var uniqueMusicalObjects = new HashSet<MusicalObjectControl>();
+            foreach (var musicalObject in segment.interactiveObjects)
             {
-                uniqueFrogs.Add(frog);
+                uniqueMusicalObjects.Add(musicalObject);
             }
             
-            // Setup click handlers only for unique frogs
-            foreach (var frog in uniqueFrogs)
+            // Setup click handlers only for unique musical objects
+            foreach (var musicalObject in uniqueMusicalObjects)
             {
                 int capturedSegmentIndex = segmentIndex;
                 
-                frog.OnClicked += () =>
+                musicalObject.OnClicked += () =>
                 {
-                    OnInteractiveObjectClicked(capturedSegmentIndex, frog);
+                    OnInteractiveObjectClicked(capturedSegmentIndex, musicalObject);
                 };
             }
             
@@ -132,51 +132,51 @@ public class MainGame : MonoBehaviour
         }
     }
 
-    void OnInteractiveObjectClicked(int segmentIndex, FrogControl clickedFrog)
+    void OnInteractiveObjectClicked(int segmentIndex, MusicalObjectControl clickedMusicalObject)
     {
         if (debugMode)
-            Debug.Log($"Interactive object clicked: Segment {segmentIndex}, Frog {clickedFrog.name}");
+            Debug.Log($"Interactive object clicked: Segment {segmentIndex}, Musical Object {clickedMusicalObject.name}");
             
         // Handle click logic here - check if it's the correct sequence
         if (segmentIndex == currentSegmentIndex && isPlayingSegment)
         {
             var segment = gameSegments[segmentIndex];
-            if (segment.interactiveObjects.Contains(clickedFrog))
+            if (segment.interactiveObjects.Contains(clickedMusicalObject))
             {
-                // Find the index of the clicked frog in the segment's interactive objects
-                int clickedFrogIndex = segment.interactiveObjects.IndexOf(clickedFrog);
+                // Find the index of the clicked musical object in the segment's interactive objects
+                int clickedObjectIndex = segment.interactiveObjects.IndexOf(clickedMusicalObject);
 
-                // Check if this is the expected frog at the current position in the sequence
-                var expectedFrog = segment.interactiveObjects[currentObjectIndex];
+                // Check if this is the expected musical object at the current position in the sequence
+                var expectedMusicalObject = segment.interactiveObjects[currentObjectIndex];
                 
-                if (clickedFrog == expectedFrog)
+                if (clickedMusicalObject == expectedMusicalObject)
                 {
                     // Correct sequence - advance to next expected position
                     currentObjectIndex++;
                     
                     if (debugMode)
-                        Debug.Log($"Correct! Expected frog at position {currentObjectIndex-1} clicked. Next expected position: {currentObjectIndex}");
+                        Debug.Log($"Correct! Expected musical object at position {currentObjectIndex-1} clicked. Next expected position: {currentObjectIndex}");
                     
                                          // Check if this was the last object in the sequence
                      if (currentObjectIndex >= segment.interactiveObjects.Count)
                      {
-                         // Give temporary feedback to the last frog first
-                         clickedFrog.Play(true);
+                         // Give temporary feedback to the last musical object first
+                         clickedMusicalObject.Play(true);
                          
                          if (debugMode)
-                             Debug.Log($"Sequence completed! Making all frogs permanently happy...");
+                             Debug.Log($"Sequence completed! Making all musical objects permanently happy...");
                          
-                         // Wait for temporary animation to complete, then permanently color all frogs
+                         // Wait for temporary animation to complete, then permanently color all musical objects
                          DOVirtual.DelayedCall(0.2f, () =>
                         {
-                            // Sequence completed successfully - permanently color ALL frogs in this segment
-                            foreach (var frog in segment.interactiveObjects)
+                            // Sequence completed successfully - permanently color ALL musical objects in this segment
+                            foreach (var musicalObject in segment.interactiveObjects)
                             {
-                                frog.SetColored(permanent: true);
+                                musicalObject.SetColored(permanent: true);
                             }
                             
                             if (debugMode)
-                                Debug.Log($"Segment {segmentIndex} sequence completed! All frogs permanently colored.");
+                                Debug.Log($"Segment {segmentIndex} sequence completed! All musical objects permanently colored.");
                             
                             CompleteSegment(segmentIndex);
                         });
@@ -184,23 +184,23 @@ public class MainGame : MonoBehaviour
                     else
                     {
                         // Correct click but sequence not finished yet - give temporary feedback
-                        clickedFrog.Play(true);
+                        clickedMusicalObject.Play(true);
                         
                         if (debugMode)
-                            Debug.Log($"Correct click {clickedFrogIndex}, waiting for sequence completion...");
+                            Debug.Log($"Correct click {clickedObjectIndex}, waiting for sequence completion...");
                     }
                 }
                 else
                 {
                     // Wrong sequence - play wrong animations and reset sequence
                     
-                    // Play wrong selected animation on the clicked frog
-                    clickedFrog.PlayWrongSelected();
+                    // Play wrong selected animation on the clicked musical object
+                    clickedMusicalObject.PlayWrongSelected();
                     
-                    // Play wrong reset animation on all other frogs in the segment
+                    // Play wrong reset animation on all other musical objects in the segment
                     for (int i = 0; i < segment.interactiveObjects.Count; i++)
                     {
-                        if (segment.interactiveObjects[i] != clickedFrog) // Skip the clicked frog
+                        if (segment.interactiveObjects[i] != clickedMusicalObject) // Skip the clicked musical object
                         {
                             segment.interactiveObjects[i].PlayWrongReset();
                         }
@@ -209,7 +209,7 @@ public class MainGame : MonoBehaviour
                     currentObjectIndex = 0; // Reset sequence on wrong click
                     
                     if (debugMode)
-                        Debug.Log($"Wrong! Clicked frog {clickedFrogIndex}, but expected frog at position {currentObjectIndex}. Sequence reset.");
+                        Debug.Log($"Wrong! Clicked musical object {clickedObjectIndex}, but expected musical object at position {currentObjectIndex}. Sequence reset.");
                 }
             }
         }
