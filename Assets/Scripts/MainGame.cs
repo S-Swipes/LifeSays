@@ -261,7 +261,8 @@ public class MainGame : MonoBehaviour
     void CompleteSegment(int segmentIndex)
     {
         if (segmentIndex >= gameSegments.Count) return;
-        
+        //  move camera to the next segment
+        GetComponent<GameSegmentLooper>().PlaySegment(gameSegments[segmentIndex]);
         var segment = gameSegments[segmentIndex];
         segment.isCompleted = true;
         isPlayingSegment = false;
