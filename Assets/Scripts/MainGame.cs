@@ -31,7 +31,9 @@ public class MainGame : MonoBehaviour
     // Private variables
     private int currentSegmentIndex = 0;
     private int currentObjectIndex = 0;
+    private int currentRevealedLength = 1; // Simon Says: how many elements of the sequence are currently revealed
     private bool isPlayingSegment = false;
+    private bool isWaitingForPlayerInput = false; // True when sequence finished playing and waiting for player
     
     // Events
     public event Action<int> OnSegmentStarted;
@@ -90,12 +92,14 @@ public class MainGame : MonoBehaviour
 
         currentSegmentIndex = segmentIndex;
         currentObjectIndex = 0;
+        currentRevealedLength = 1; // Simon Says: start with revealing only the first element
         isPlayingSegment = true;
+        isWaitingForPlayerInput = false;
         
         var segment = gameSegments[segmentIndex];
         
         if (debugMode)
-            Debug.Log($"Starting segment {segmentIndex}: {segment.segmentName}");
+            Debug.Log($"Starting segment {segmentIndex}: {segment.segmentName} - Revealing first {currentRevealedLength} elements");
             
         OnSegmentStarted?.Invoke(segmentIndex);
         
@@ -113,8 +117,14 @@ public class MainGame : MonoBehaviour
             return;
         }
         
-        // Play each object in the segment with delays
-        for (int i = 0; i < segment.interactiveObjects.Count; i++)
+        // Simon Says: only play up to the current revealed length
+        int elementsToPlay = Mathf.Min(currentRevealedLength, segment.interactiveObjects.Count);
+        
+        if (debugMode)
+            Debug.Log($"Playing sequence: showing {elementsToPlay} out of {segment.interactiveObjects.Count} elements");
+        
+        // Play each object in the revealed portion of the sequence with delays
+        for (int i = 0; i < elementsToPlay; i++)
         {
             int objectIndex = i;
             float delay = i * segment.delayBetweenObjects;
@@ -130,6 +140,15 @@ public class MainGame : MonoBehaviour
                 }
             });
         }
+        
+        // After the sequence finishes playing, wait for player input
+        float totalSequenceTime = (elementsToPlay - 1) * segment.delayBetweenObjects + 1f; // +1 for last object play time
+        DOVirtual.DelayedCall(totalSequenceTime, () =>
+        {
+            isWaitingForPlayerInput = true;
+            if (debugMode)
+                Debug.Log($"Sequence finished playing. Waiting for player to repeat {elementsToPlay} elements.");
+        });
     }
 
     void OnInteractiveObjectClicked(int segmentIndex, MusicalObjectControl clickedMusicalObject)
@@ -137,81 +156,89 @@ public class MainGame : MonoBehaviour
         if (debugMode)
             Debug.Log($"Interactive object clicked: Segment {segmentIndex}, Musical Object {clickedMusicalObject.name}");
             
-        // Handle click logic here - check if it's the correct sequence
-        if (segmentIndex == currentSegmentIndex && isPlayingSegment)
+        // Simon Says: Only accept clicks when waiting for player input
+        if (segmentIndex != currentSegmentIndex || !isPlayingSegment || !isWaitingForPlayerInput)
         {
-            var segment = gameSegments[segmentIndex];
-            if (segment.interactiveObjects.Contains(clickedMusicalObject))
-            {
-                // Find the index of the clicked musical object in the segment's interactive objects
-                int clickedObjectIndex = segment.interactiveObjects.IndexOf(clickedMusicalObject);
+            if (debugMode)
+                Debug.Log("Click ignored - not waiting for player input");
+            return;
+        }
 
-                // Check if this is the expected musical object at the current position in the sequence
-                var expectedMusicalObject = segment.interactiveObjects[currentObjectIndex];
-                
-                if (clickedMusicalObject == expectedMusicalObject)
+        var segment = gameSegments[segmentIndex];
+        if (!segment.interactiveObjects.Contains(clickedMusicalObject))
+            return;
+
+        // Check if clicked object matches the expected object at current position
+        var expectedMusicalObject = segment.interactiveObjects[currentObjectIndex];
+        
+        if (clickedMusicalObject == expectedMusicalObject)
+        {
+            // Correct click!
+            currentObjectIndex++;
+            clickedMusicalObject.Play(true); // Give feedback
+            
+            if (debugMode)
+                Debug.Log($"Correct! Clicked object at position {currentObjectIndex-1}. Progress: {currentObjectIndex}/{currentRevealedLength}");
+            
+            // Check if player has completed the current revealed sequence
+            if (currentObjectIndex >= currentRevealedLength)
+            {
+                // Player completed current revealed sequence successfully!
+                if (currentRevealedLength >= segment.interactiveObjects.Count)
                 {
-                    // Correct sequence - advance to next expected position
-                    currentObjectIndex++;
-                    
-                    if (debugMode)
-                        Debug.Log($"Correct! Expected musical object at position {currentObjectIndex-1} clicked. Next expected position: {currentObjectIndex}");
-                    
-                                         // Check if this was the last object in the sequence
-                     if (currentObjectIndex >= segment.interactiveObjects.Count)
-                     {
-                         // Give temporary feedback to the last musical object first
-                         clickedMusicalObject.Play(true);
-                         
-                         if (debugMode)
-                             Debug.Log($"Sequence completed! Making all musical objects permanently happy...");
-                         
-                         // Wait for temporary animation to complete, then permanently color all musical objects
-                         DOVirtual.DelayedCall(0.2f, () =>
-                        {
-                            // Sequence completed successfully - permanently color ALL musical objects in this segment
-                            foreach (var musicalObject in segment.interactiveObjects)
-                            {
-                                musicalObject.SetColored(permanent: true);
-                            }
-                            
-                            if (debugMode)
-                                Debug.Log($"Segment {segmentIndex} sequence completed! All musical objects permanently colored.");
-                            
-                            CompleteSegment(segmentIndex);
-                        });
-                    }
-                    else
+                    // Entire segment sequence completed!
+                    DOVirtual.DelayedCall(0.2f, () =>
                     {
-                        // Correct click but sequence not finished yet - give temporary feedback
-                        clickedMusicalObject.Play(true);
+                        // Permanently color all musical objects in this segment
+                        foreach (var musicalObject in segment.interactiveObjects)
+                        {
+                            musicalObject.SetColored(permanent: true);
+                        }
                         
                         if (debugMode)
-                            Debug.Log($"Correct click {clickedObjectIndex}, waiting for sequence completion...");
-                    }
+                            Debug.Log($"Segment {segmentIndex} completed! All musical objects permanently colored.");
+                        
+                        CompleteSegment(segmentIndex);
+                    });
                 }
                 else
                 {
-                    // Wrong sequence - play wrong animations and reset sequence
-                    
-                    // Play wrong selected animation on the clicked musical object
-                    clickedMusicalObject.PlayWrongSelected();
-                    
-                    // Play wrong reset animation on all other musical objects in the segment
-                    for (int i = 0; i < segment.interactiveObjects.Count; i++)
-                    {
-                        if (segment.interactiveObjects[i] != clickedMusicalObject) // Skip the clicked musical object
-                        {
-                            segment.interactiveObjects[i].PlayWrongReset();
-                        }
-                    }
-                    
-                    currentObjectIndex = 0; // Reset sequence on wrong click
+                    // Increase revealed length and replay sequence
+                    currentRevealedLength++;
+                    currentObjectIndex = 0;
+                    isWaitingForPlayerInput = false;
                     
                     if (debugMode)
-                        Debug.Log($"Wrong! Clicked musical object {clickedObjectIndex}, but expected musical object at position {currentObjectIndex}. Sequence reset.");
+                        Debug.Log($"Sequence completed! Revealing {currentRevealedLength} elements now.");
+                    
+                    // Wait a moment then replay with more elements revealed
+                    DOVirtual.DelayedCall(1f, () => PlaySegmentSequence(segmentIndex));
                 }
             }
+            // If not completed current sequence yet, just wait for next click
+        }
+        else
+        {
+            // Wrong click! Reset current attempt and replay current sequence
+            clickedMusicalObject.PlayWrongSelected();
+            
+            // Play wrong reset animation on other objects
+            for (int i = 0; i < segment.interactiveObjects.Count; i++)
+            {
+                if (segment.interactiveObjects[i] != clickedMusicalObject)
+                {
+                    segment.interactiveObjects[i].PlayWrongReset();
+                }
+            }
+            
+            currentObjectIndex = 0; // Reset current attempt
+            isWaitingForPlayerInput = false;
+            
+            if (debugMode)
+                Debug.Log($"Wrong! Expected object at position {currentObjectIndex}, got {clickedMusicalObject.name}. Replaying current sequence.");
+            
+            // Wait a moment then replay current sequence
+            DOVirtual.DelayedCall(2f, () => PlaySegmentSequence(segmentIndex));
         }
     }
 
@@ -266,7 +293,9 @@ public class MainGame : MonoBehaviour
         
         currentSegmentIndex = 0;
         currentObjectIndex = 0;
+        currentRevealedLength = 1; // Simon Says: reset to reveal first element
         isPlayingSegment = false;
+        isWaitingForPlayerInput = false;
         
         DOVirtual.DelayedCall(0.5f, () => StartSegment(0));
     }
