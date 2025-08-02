@@ -155,19 +155,14 @@ public class MainGame : MonoBehaviour
         
         var segment = gameSegments[segmentIndex];
         
-        if (debugMode)
-            Debug.Log($"Starting segment {segmentIndex}: {segment.segmentName} - Revealing first {currentRevealedLength} elements");
-            
         OnSegmentStarted?.Invoke(segmentIndex);
         
-        // Clamp segment start delay to prevent extremely long waits that could break the flow
-        float clampedStartDelay = Mathf.Clamp(segment.startDelay, 0f, 10f);
-        
-        if (debugMode && segment.startDelay != clampedStartDelay)
-            Debug.LogWarning($"Segment {segmentIndex} start delay clamped from {segment.startDelay}s to {clampedStartDelay}s to prevent timing issues");
-        
-        // Start playing the segment sequence after the segment start delay
-        DOVirtual.DelayedCall(clampedStartDelay, () => PlaySegmentSequence(segmentIndex));
+        // PlaySegmentSequence now handles its own synchronization with master timing
+        // No need for additional delays here
+        if (debugMode)
+            Debug.Log($"Starting segment {segmentIndex}: {segment.segmentName} - sequence will sync to master timing");
+            
+        PlaySegmentSequence(segmentIndex);
     }
     
     void StartSegmentLoop(int segmentIndex)
@@ -313,10 +308,48 @@ public class MainGame : MonoBehaviour
         if (debugMode)
             Debug.Log($"Playing sequence: showing {elementsToPlay} out of {segment.interactiveObjects.Count} elements");
         
-        // Calculate expected click times for timing precision
+        // Synchronize with the segment's actual totalDuration cycle timing
+        float clampedStartDelay = Mathf.Clamp(segment.startDelay, 0f, 10f);
+        
+        // Calculate where we are in the segment's cycle and when the next object play phase starts
+        float timeSinceGameStart = Time.time - gameStartTime;
+        
+        // Find the next time the segment cycle will start playing objects
+        // Objects start playing after startDelay within each totalDuration cycle
+        float cycleLength = segment.totalDuration;
+        float timeSinceLastCycleStart = timeSinceGameStart % cycleLength;
+        float timeUntilNextCycleStart = cycleLength - timeSinceLastCycleStart;
+        
+        // Calculate when objects would start playing in the next cycle
+        float timeUntilObjectsStart;
+        if (timeSinceLastCycleStart < clampedStartDelay)
+        {
+            // We're still in the start delay of the current cycle
+            timeUntilObjectsStart = clampedStartDelay - timeSinceLastCycleStart;
+        }
+        else
+        {
+            // We're past the start delay, wait for the next cycle
+            timeUntilObjectsStart = timeUntilNextCycleStart + clampedStartDelay;
+        }
+        
+        // Ensure we have a minimum delay to avoid immediate starts
+        if (timeUntilObjectsStart < 0.1f)
+        {
+            timeUntilObjectsStart += cycleLength;
+        }
+        
+        if (debugMode)
+        {
+            Debug.Log($"Reveal sequence sync to segment cycle: timeSinceStart={timeSinceGameStart:F2}s, cycleLength={cycleLength:F2}s, " +
+                     $"timeSinceLastCycleStart={timeSinceLastCycleStart:F2}s, timeUntilObjectsStart={timeUntilObjectsStart:F2}s");
+        }
+        
+        // Calculate expected click times for timing precision (accounting for synchronization)
         expectedClickTimes.Clear();
         float totalSequenceTime = (elementsToPlay - 1) * segment.delayBetweenObjects + 1f; // +1 for last object play time
-        sequencePlayStartTime = Time.time + totalSequenceTime; // Player input starts after sequence finishes
+        float actualSequenceStartTime = Time.time + timeUntilObjectsStart; // When the sequence will actually start
+        sequencePlayStartTime = actualSequenceStartTime + totalSequenceTime; // Player input starts after sequence finishes
         
         for (int i = 0; i < elementsToPlay; i++)
         {
@@ -326,32 +359,39 @@ public class MainGame : MonoBehaviour
         }
         
         if (debugMode)
-            Debug.Log($"Expected click times calculated. Sequence will start accepting input at: {sequencePlayStartTime}");
+            Debug.Log($"Expected click times calculated. Sequence will start at: {actualSequenceStartTime:F2}s, accepting input at: {sequencePlayStartTime:F2}s");
         
-        // Play each object in the revealed portion of the sequence with delays
-        for (int i = 0; i < elementsToPlay; i++)
+        // Add the synchronization delay before starting the sequence
+        DOVirtual.DelayedCall(timeUntilObjectsStart, () =>
         {
-            int objectIndex = i;
-            float delay = i * segment.delayBetweenObjects;
-            
-            DOVirtual.DelayedCall(delay, () =>
-            {
-                if (currentSegmentIndex == segmentIndex && objectIndex < segment.interactiveObjects.Count)
-                {
-                    if (debugMode)
-                        Debug.Log($"Playing object {objectIndex} in segment {segmentIndex}");
-                        
-                    segment.interactiveObjects[objectIndex].Play();
-                }
-            });
-        }
-        
-        // After the sequence finishes playing, wait for player input
-        DOVirtual.DelayedCall(totalSequenceTime, () =>
-        {
-            isWaitingForPlayerInput = true;
             if (debugMode)
-                Debug.Log($"Sequence finished playing. Waiting for player to repeat {elementsToPlay} elements.");
+                Debug.Log($"Starting segment-cycle-synchronized reveal sequence for segment {segmentIndex}");
+            
+            // Play each object in the revealed portion of the sequence with delays
+            for (int i = 0; i < elementsToPlay; i++)
+            {
+                int objectIndex = i;
+                float delay = i * segment.delayBetweenObjects;
+                
+                DOVirtual.DelayedCall(delay, () =>
+                {
+                    if (currentSegmentIndex == segmentIndex && objectIndex < segment.interactiveObjects.Count)
+                    {
+                        if (debugMode)
+                            Debug.Log($"Playing object {objectIndex} in segment {segmentIndex} at segment-cycle-synchronized time");
+                            
+                        segment.interactiveObjects[objectIndex].Play();
+                    }
+                });
+            }
+            
+            // After the sequence finishes playing, wait for player input
+            DOVirtual.DelayedCall(totalSequenceTime, () =>
+            {
+                isWaitingForPlayerInput = true;
+                if (debugMode)
+                    Debug.Log($"Segment-cycle-synchronized sequence finished playing. Waiting for player to repeat {elementsToPlay} elements.");
+            });
         });
     }
 
@@ -443,8 +483,8 @@ public class MainGame : MonoBehaviour
                     if (debugMode)
                         Debug.Log($"Sequence completed! Revealing {currentRevealedLength} elements now.");
                     
-                    // Wait a longer moment then replay with more elements revealed
-                    DOVirtual.DelayedCall(2f, () => PlaySegmentSequence(segmentIndex));
+                    // PlaySegmentSequence will sync to the next appropriate master beat timing
+                    PlaySegmentSequence(segmentIndex);
                 }
             }
             else
@@ -485,8 +525,8 @@ public class MainGame : MonoBehaviour
             if (debugMode)
                 Debug.Log($"Wrong! Expected object at position {currentObjectIndex}, got {clickedMusicalObject.name}. Replaying current sequence.");
             
-            // Wait a moment then replay current sequence
-            DOVirtual.DelayedCall(2f, () => PlaySegmentSequence(segmentIndex));
+            // PlaySegmentSequence will sync to the next appropriate master beat timing
+            PlaySegmentSequence(segmentIndex);
         }
     }
 

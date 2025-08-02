@@ -570,7 +570,7 @@ PrefabInstance:
       objectReference: {fileID: 1143161212}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: delayBetweenSegments
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: cameraTransitionDuration
@@ -581,8 +581,28 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.data[1].startDelay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.data[2].startDelay
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: gameSegments.Array.data[1].isCompleted
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.data[0].totalDuration
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.data[1].totalDuration
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
+      propertyPath: gameSegments.Array.data[2].totalDuration
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: gameSegments.Array.data[0].segmentEndDelay
