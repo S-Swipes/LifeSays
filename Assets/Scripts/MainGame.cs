@@ -629,6 +629,12 @@ public class MainGame : MonoBehaviour
             }
         });
         
+        // For the last segment, move camera immediately without waiting for loop delay
+        if (segmentIndex + 1 >= gameSegments.Count)
+        {
+            SwitchToNextCamera();
+        }
+        
         // Move to next segment after delay
         if (autoProgressSegments)
         {
