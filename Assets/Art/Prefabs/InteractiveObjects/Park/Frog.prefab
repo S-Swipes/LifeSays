@@ -50,8 +50,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3992725821175716043, guid: 78cbf40dc2cfa4cb0a50d895ef051cc2, type: 3}
       propertyPath: m_Name
-      value: InteractiveObjectContainer
+      value: Frog
       objectReference: {fileID: 0}
+    - target: {fileID: 7419659173776538426, guid: 78cbf40dc2cfa4cb0a50d895ef051cc2, type: 3}
+      propertyPath: m_Animation
+      value: 
+      objectReference: {fileID: 7400000, guid: 8e61ca63dc8c542c1bb924470d16d322, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
