@@ -120,6 +120,18 @@ public class MainGame : MonoBehaviour
         // Simon Says: only play up to the current revealed length
         int elementsToPlay = Mathf.Min(currentRevealedLength, segment.interactiveObjects.Count);
         
+        // Check for invisible musical objects in the revealed part and make them visible
+        for (int i = 0; i < elementsToPlay; i++)
+        {
+            var musicalObject = segment.interactiveObjects[i];
+            if (musicalObject != null && !musicalObject.gameObject.activeInHierarchy)
+            {
+                musicalObject.gameObject.SetActive(true);
+                if (debugMode)
+                    Debug.Log($"Setting visibility to true for musical object {i} in segment {segmentIndex} (part of revealed sequence)");
+            }
+        }
+        
         if (debugMode)
             Debug.Log($"Playing sequence: showing {elementsToPlay} out of {segment.interactiveObjects.Count} elements");
         
