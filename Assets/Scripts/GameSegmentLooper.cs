@@ -26,13 +26,17 @@ public class GameSegmentLooper : MonoBehaviour
         }
         
         // Play the segment
-        Debug.Log("Playing segment: " + segment.segmentName + " with delay: " + segment.delayBetweenObjects + ", start offset: " + startOffset);
+        Debug.Log("Playing segment: " + segment.segmentName + " with delay: " + segment.delayBetweenObjects + 
+                  ", start delay: " + segment.segmentStartDelay + 
+                  ", end delay: " + segment.segmentEndDelay + 
+                  ", start offset: " + startOffset);
         loopSequence = DOTween.Sequence();
         
-        // Add initial offset if provided to synchronize with reveal sequence
-        if (startOffset > 0f)
+        // Add initial start delay from segment timing
+        float totalStartDelay = segment.segmentStartDelay + startOffset;
+        if (totalStartDelay > 0f)
         {
-            loopSequence.AppendInterval(startOffset);
+            loopSequence.AppendInterval(totalStartDelay);
         }
         
         for (int i = 0; i < segment.interactiveObjects.Count; i++)
@@ -43,6 +47,12 @@ public class GameSegmentLooper : MonoBehaviour
                 segment.interactiveObjects[index].Play(true);
             });
             loopSequence.AppendInterval(segment.delayBetweenObjects);
+        }
+        
+        // Add ending delay from segment timing before looping
+        if (segment.segmentEndDelay > 0f)
+        {
+            loopSequence.AppendInterval(segment.segmentEndDelay);
         }
         
         loopSequence.AppendCallback(() => {

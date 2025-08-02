@@ -112,6 +112,10 @@ PrefabInstance:
       propertyPath: 'm_Animations.Array.data[4]'
       value: 
       objectReference: {fileID: 7400000, guid: 97bfba7ea45104a5d85b64e7227e105b, type: 2}
+    - target: {fileID: 7506475571900428003, guid: 78cbf40dc2cfa4cb0a50d895ef051cc2, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 3887dd4e6355f48649740b233bede8f2, type: 3}
     - target: {fileID: 9166354294090561516, guid: 78cbf40dc2cfa4cb0a50d895ef051cc2, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.42
