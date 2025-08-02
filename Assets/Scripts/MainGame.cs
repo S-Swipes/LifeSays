@@ -203,16 +203,16 @@ public class MainGame : MonoBehaviour
                 }
                 else
                 {
-                    // Increase revealed length and replay sequence
-                    currentRevealedLength++;
-                    currentObjectIndex = 0;
-                    isWaitingForPlayerInput = false;
-                    
-                    if (debugMode)
-                        Debug.Log($"Sequence completed! Revealing {currentRevealedLength} elements now.");
-                    
-                    // Wait a moment then replay with more elements revealed
-                    DOVirtual.DelayedCall(1f, () => PlaySegmentSequence(segmentIndex));
+                                         // Increase revealed length and replay sequence
+                     currentRevealedLength++;
+                     currentObjectIndex = 0;
+                     isWaitingForPlayerInput = false;
+                     
+                     if (debugMode)
+                         Debug.Log($"Sequence completed! Revealing {currentRevealedLength} elements now.");
+                     
+                     // Wait a longer moment then replay with more elements revealed
+                     DOVirtual.DelayedCall(4f, () => PlaySegmentSequence(segmentIndex));
                 }
             }
             // If not completed current sequence yet, just wait for next click

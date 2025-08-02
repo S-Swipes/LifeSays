@@ -127,7 +127,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bff20a8633cd4b1d88ad8160599e63d, type: 3}
+  m_Script: {fileID: 11500000, guid: 966be9612b03d4fea890d1197f235a9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &156276918
@@ -292,20 +292,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameSegments:
-  - segmentName: Couple
-    interactiveObjects:
-    - {fileID: 2132978763}
-    - {fileID: 1786170409}
-    delayBetweenObjects: 1
-    isCompleted: 0
-    segmentStartDelay: 1
-    segmentEndDelay: 1
   - segmentName: Frogs
     interactiveObjects:
     - {fileID: 955669061}
     - {fileID: 528479447}
     - {fileID: 955669061}
     - {fileID: 87179441}
+    delayBetweenObjects: 1
+    isCompleted: 0
+    segmentStartDelay: 1
+    segmentEndDelay: 1
+  - segmentName: Couple
+    interactiveObjects:
+    - {fileID: 2132978763}
+    - {fileID: 1786170409}
     delayBetweenObjects: 1
     isCompleted: 0
     segmentStartDelay: 1
@@ -336,7 +336,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bff20a8633cd4b1d88ad8160599e63d, type: 3}
+  m_Script: {fileID: 11500000, guid: 966be9612b03d4fea890d1197f235a9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &940687769
@@ -404,7 +404,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bff20a8633cd4b1d88ad8160599e63d, type: 3}
+  m_Script: {fileID: 11500000, guid: 966be9612b03d4fea890d1197f235a9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &980231789
@@ -717,7 +717,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bff20a8633cd4b1d88ad8160599e63d, type: 3}
+  m_Script: {fileID: 11500000, guid: 966be9612b03d4fea890d1197f235a9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1946811503
@@ -970,7 +970,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bff20a8633cd4b1d88ad8160599e63d, type: 3}
+  m_Script: {fileID: 11500000, guid: 966be9612b03d4fea890d1197f235a9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &6701077039419447904
@@ -1083,6 +1083,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2123343437763492697, guid: c654c136181134a409a84f3e977abfed, type: 3}
       propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773737227024060331, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5393254756260105775, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6368222127185871976, guid: c654c136181134a409a84f3e977abfed, type: 3}
