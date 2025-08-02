@@ -11,6 +11,7 @@ public class GameSegment
     public List<MusicalObjectControl> interactiveObjects = new List<MusicalObjectControl>();
     public float delayBetweenObjects = 1f;
     public bool isCompleted = false;
+    public bool isLooping = false; // Track if this segment is currently looping
     
     [Header("Segment Timing")]
     public float segmentStartDelay = 0f;
@@ -26,6 +27,9 @@ public class MainGame : MonoBehaviour
     public float delayBetweenSegments = 2f;
     public bool autoProgressSegments = true;
     
+    [Header("Master Timing")]
+    public float masterBeatInterval = 1f; // Master timing grid for synchronization
+    
     [Header("Camera Settings")]
     public CinemachineMixingCamera mixingCamera;
     public float cameraTransitionDuration = 2f;
@@ -40,6 +44,8 @@ public class MainGame : MonoBehaviour
     private bool isPlayingSegment = false;
     private bool isWaitingForPlayerInput = false; // True when sequence finished playing and waiting for player
     private int currentCameraIndex = 0;
+    private float gameStartTime; // Track when the game started for master timing
+    private Dictionary<int, Sequence> segmentLoops = new Dictionary<int, Sequence>(); // Track individual segment loops
     
     // Events
     public event Action<int> OnSegmentStarted;
@@ -74,8 +80,10 @@ public class MainGame : MonoBehaviour
 
     void InitializeGame()
     {
+        gameStartTime = Time.time; // Record game start time for master timing synchronization
+        
         if (debugMode)
-            Debug.Log($"Initializing game with {gameSegments.Count} segments");
+            Debug.Log($"Initializing game with {gameSegments.Count} segments. Game start time: {gameStartTime}");
             
         // Initialize all segments
         for (int segmentIndex = 0; segmentIndex < gameSegments.Count; segmentIndex++)
@@ -101,6 +109,7 @@ public class MainGame : MonoBehaviour
             }
             
             segment.isCompleted = false;
+            segment.isLooping = false;
         }
         
         // Start the first segment after a brief delay
@@ -121,6 +130,8 @@ public class MainGame : MonoBehaviour
             return;
         }
 
+        // Don't stop existing loops - let completed segments continue playing in background
+
         currentSegmentIndex = segmentIndex;
         currentObjectIndex = 0;
         currentRevealedLength = 1; // Simon Says: start with revealing only the first element
@@ -136,6 +147,71 @@ public class MainGame : MonoBehaviour
         
         // Start playing the segment sequence after the segment start delay
         DOVirtual.DelayedCall(segment.segmentStartDelay, () => PlaySegmentSequence(segmentIndex));
+    }
+    
+    void StartSegmentLoop(int segmentIndex)
+    {
+        if (segmentIndex >= gameSegments.Count) return;
+        
+        var segment = gameSegments[segmentIndex];
+        
+        // Stop any existing loop for this specific segment
+        if (segmentLoops.ContainsKey(segmentIndex))
+        {
+            segmentLoops[segmentIndex].Kill();
+        }
+        
+        // Calculate synchronized start time based on master timing
+        float timeSinceGameStart = Time.time - gameStartTime;
+        float masterCycleTime = segment.interactiveObjects.Count * segment.delayBetweenObjects;
+        float cyclePosition = timeSinceGameStart % masterCycleTime;
+        float startOffset = masterCycleTime - cyclePosition;
+        
+        if (debugMode)
+            Debug.Log($"Starting loop for segment {segmentIndex} with synchronized offset: {startOffset}s");
+        
+        // Create new loop sequence
+        Sequence loopSequence = DOTween.Sequence();
+        
+        // Add initial offset for synchronization
+        if (startOffset > 0f && startOffset < masterCycleTime)
+        {
+            loopSequence.AppendInterval(startOffset);
+        }
+        
+        // Add the segment playback loop
+        for (int i = 0; i < segment.interactiveObjects.Count; i++)
+        {
+            int index = i;
+            loopSequence.AppendCallback(() => {
+                if (segment.interactiveObjects[index] != null)
+                {
+                    segment.interactiveObjects[index].Play(true);
+                }
+            });
+            loopSequence.AppendInterval(segment.delayBetweenObjects);
+        }
+        
+        // Set to loop infinitely and start
+        loopSequence.SetLoops(-1).Play();
+        
+        // Store the sequence for later management
+        segmentLoops[segmentIndex] = loopSequence;
+        segment.isLooping = true;
+    }
+    
+    void StopSegmentLoop(int segmentIndex)
+    {
+        if (segmentLoops.ContainsKey(segmentIndex))
+        {
+            segmentLoops[segmentIndex].Kill();
+            segmentLoops.Remove(segmentIndex);
+        }
+        
+        if (segmentIndex < gameSegments.Count)
+        {
+            gameSegments[segmentIndex].isLooping = false;
+        }
     }
 
     void PlaySegmentSequence(int segmentIndex)
@@ -316,18 +392,6 @@ public class MainGame : MonoBehaviour
         if (segmentIndex >= gameSegments.Count) return;
         
         var segment = gameSegments[segmentIndex];
-        
-        // Add a 1-second delay before calling Game Segment Looper
-        DOVirtual.DelayedCall(1f, () =>
-        {
-            // Move camera to the next segment (if there are more segments)
-            if (segmentIndex + 1 < gameSegments.Count)
-            {
-                SwitchToNextCamera();
-            }
-            
-            GetComponent<GameSegmentLooper>().PlaySegment(gameSegments[segmentIndex]);
-        });
         segment.isCompleted = true;
         isPlayingSegment = false;
         
@@ -335,6 +399,18 @@ public class MainGame : MonoBehaviour
             Debug.Log($"Segment {segmentIndex} completed: {segment.segmentName}");
             
         OnSegmentCompleted?.Invoke(segmentIndex);
+        
+        // Start the loop for this completed segment in the background
+        DOVirtual.DelayedCall(1f, () =>
+        {
+            StartSegmentLoop(segmentIndex);
+            
+            // Move camera to the next segment (if there are more segments)
+            if (segmentIndex + 1 < gameSegments.Count)
+            {
+                SwitchToNextCamera();
+            }
+        });
         
         // Move to next segment after delay
         if (autoProgressSegments)
@@ -410,10 +486,21 @@ public class MainGame : MonoBehaviour
 
     public void RestartGame()
     {
+        // Stop all existing segment loops
+        foreach (var kvp in segmentLoops)
+        {
+            kvp.Value.Kill();
+        }
+        segmentLoops.Clear();
+        
+        // Reset game start time for new master timing
+        gameStartTime = Time.time;
+        
         // Reset all segments
         foreach (var segment in gameSegments)
         {
             segment.isCompleted = false;
+            segment.isLooping = false;
             foreach (var obj in segment.interactiveObjects)
             {
                 obj.ResetState();
@@ -444,6 +531,39 @@ public class MainGame : MonoBehaviour
     public int CurrentSegmentIndex => currentSegmentIndex;
     public bool IsPlayingSegment => isPlayingSegment;
     public GameSegment CurrentSegment => currentSegmentIndex < gameSegments.Count ? gameSegments[currentSegmentIndex] : null;
+    
+    // Background loop management
+    public bool IsSegmentLooping(int segmentIndex) => segmentIndex < gameSegments.Count && gameSegments[segmentIndex].isLooping;
+    public int GetActiveLoopCount() => segmentLoops.Count;
+    public List<int> GetLoopingSegmentIndices() => new List<int>(segmentLoops.Keys);
+    
+    // Manual loop control methods
+    public void StartSegmentLoopManual(int segmentIndex)
+    {
+        if (segmentIndex < gameSegments.Count && gameSegments[segmentIndex].isCompleted)
+        {
+            StartSegmentLoop(segmentIndex);
+        }
+    }
+    
+    public void StopSegmentLoopManual(int segmentIndex)
+    {
+        StopSegmentLoop(segmentIndex);
+    }
+    
+    public void StopAllLoops()
+    {
+        foreach (var kvp in segmentLoops)
+        {
+            kvp.Value.Kill();
+        }
+        segmentLoops.Clear();
+        
+        foreach (var segment in gameSegments)
+        {
+            segment.isLooping = false;
+        }
+    }
     
     // Camera control methods
     public int CurrentCameraIndex => currentCameraIndex;

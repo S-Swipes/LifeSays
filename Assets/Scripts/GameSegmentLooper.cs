@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class GameSegmentLooper : MonoBehaviour
 {
+    private Sequence loopSequence;
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -15,29 +17,52 @@ public class GameSegmentLooper : MonoBehaviour
         
     }
 
-    public void PlaySegment(GameSegment segment)
+    public void PlaySegment(GameSegment segment, float startOffset = 0f)
     {
+        // Stop any existing loop
+        if (loopSequence != null)
+        {
+            loopSequence.Kill();
+        }
+        
         // Play the segment
-        Debug.Log("Playing segment: " + segment.segmentName + " with delay: " + segment.delayBetweenObjects);
-        Sequence sequence = DOTween.Sequence();
+        Debug.Log("Playing segment: " + segment.segmentName + " with delay: " + segment.delayBetweenObjects + ", start offset: " + startOffset);
+        loopSequence = DOTween.Sequence();
+        
+        // Add initial offset if provided to synchronize with reveal sequence
+        if (startOffset > 0f)
+        {
+            loopSequence.AppendInterval(startOffset);
+        }
         
         for (int i = 0; i < segment.interactiveObjects.Count; i++)
         {
             int index = i;  
-            sequence.AppendCallback(() => {
+            loopSequence.AppendCallback(() => {
                 Debug.Log("Playing interactive object: " + index);    
                 segment.interactiveObjects[index].Play(true);
             });
-            sequence.AppendInterval(segment.delayBetweenObjects);
-            
+            loopSequence.AppendInterval(segment.delayBetweenObjects);
         }
         
-        
-        
-        sequence.AppendCallback(() => {
+        loopSequence.AppendCallback(() => {
             Debug.Log("Segment completed, looping...");
         });
         
-        sequence.SetLoops(-1).Play();
+        loopSequence.SetLoops(-1).Play();
+    }
+    
+    public void StopLoop()
+    {
+        if (loopSequence != null)
+        {
+            loopSequence.Kill();
+            loopSequence = null;
+        }
+    }
+    
+    void OnDestroy()
+    {
+        StopLoop();
     }
 }
