@@ -349,13 +349,18 @@ public class MainGame : MonoBehaviour
         expectedClickTimes.Clear();
         float totalSequenceTime = (elementsToPlay - 1) * segment.delayBetweenObjects + 1f; // +1 for last object play time
         float actualSequenceStartTime = Time.time + timeUntilObjectsStart; // When the sequence will actually start
+        
         sequencePlayStartTime = actualSequenceStartTime + totalSequenceTime; // Player input starts after sequence finishes
+        Debug.Log("@@@ SEQUENCE START TIME"+ sequencePlayStartTime);
+        // 14.5
         
         for (int i = 0; i < elementsToPlay; i++)
         {
             // Expected click time is when the sequence finishes + delay for this object
-            float expectedClickTime = sequencePlayStartTime + (i * segment.delayBetweenObjects);
+            float expectedClickTime =  (i * segment.delayBetweenObjects);
             expectedClickTimes.Add(expectedClickTime);
+            Debug.Log("@@@ -------"+ expectedClickTime);
+            // [0,1.2.5,2,3]
         }
         
         if (debugMode)
@@ -538,9 +543,18 @@ public class MainGame : MonoBehaviour
         }
         
         float currentTime = Time.time;
-        float expectedTime = expectedClickTimes[clickedObjectIndex];
-        float timingDifference = Mathf.Abs(currentTime - expectedTime);
+        float BAR_TIME = 4;
+        float timePassedSinceStartLoop = (currentTime - sequencePlayStartTime)%BAR_TIME; // (14) 17.9 => 3.9 
+        float expectedTime = expectedClickTimes[clickedObjectIndex]; //  relative
         
+        // 
+        float timingDifferenceUp = Mathf.Abs(timePassedSinceStartLoop - expectedTime);
+        float timingDifferenceDown = Mathf.Abs(timingDifferenceUp - BAR_TIME);
+        
+        float timingDifference = Mathf.Min(timingDifferenceUp, timingDifferenceDown);
+        
+        
+        Debug.Log($" @@@ Timing evaluation - expectedTime: {expectedTime:F3}, timingDifference: {timingDifference:F3}");
         if (debugMode)
             Debug.Log($"Timing evaluation - Current: {currentTime:F3}, Expected: {expectedTime:F3}, Difference: {timingDifference:F3}");
         
