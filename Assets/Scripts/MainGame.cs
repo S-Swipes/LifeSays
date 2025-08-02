@@ -145,8 +145,14 @@ public class MainGame : MonoBehaviour
             
         OnSegmentStarted?.Invoke(segmentIndex);
         
+        // Clamp segment start delay to prevent extremely long waits that could break the flow
+        float clampedStartDelay = Mathf.Clamp(segment.segmentStartDelay, 0f, 10f);
+        
+        if (debugMode && segment.segmentStartDelay != clampedStartDelay)
+            Debug.LogWarning($"Segment {segmentIndex} start delay clamped from {segment.segmentStartDelay}s to {clampedStartDelay}s to prevent timing issues");
+        
         // Start playing the segment sequence after the segment start delay
-        DOVirtual.DelayedCall(segment.segmentStartDelay, () => PlaySegmentSequence(segmentIndex));
+        DOVirtual.DelayedCall(clampedStartDelay, () => PlaySegmentSequence(segmentIndex));
     }
     
     void StartSegmentLoop(int segmentIndex)
@@ -161,22 +167,49 @@ public class MainGame : MonoBehaviour
             segmentLoops[segmentIndex].Kill();
         }
         
-        // Calculate synchronized start time based on master timing
-        float timeSinceGameStart = Time.time - gameStartTime;
-        float masterCycleTime = segment.interactiveObjects.Count * segment.delayBetweenObjects;
-        float cyclePosition = timeSinceGameStart % masterCycleTime;
-        float startOffset = masterCycleTime - cyclePosition;
+        // Clamp delay values to prevent timing issues
+        float clampedStartDelay = Mathf.Clamp(segment.segmentStartDelay, 0f, 10f);
+        float clampedEndDelay = Mathf.Clamp(segment.segmentEndDelay, 0f, 10f);
+        
+        // Calculate the actual cycle time including all delays
+        float actualCycleTime = clampedStartDelay + 
+                               (segment.interactiveObjects.Count * segment.delayBetweenObjects) + 
+                               clampedEndDelay;
+        
+        // For segments with high delays, use a simplified approach to avoid timing conflicts
+        float startOffset = 0f;
+        
+        // Only use complex synchronization for segments with reasonable delays (<=2 seconds total additional delay)
+        if (clampedStartDelay + clampedEndDelay <= 2f)
+        {
+            // Original synchronization logic for normal delay values
+            float timeSinceGameStart = Time.time - gameStartTime;
+            float baseCycleTime = segment.interactiveObjects.Count * segment.delayBetweenObjects;
+            float cyclePosition = timeSinceGameStart % baseCycleTime;
+            startOffset = baseCycleTime - cyclePosition;
+        }
         
         if (debugMode)
-            Debug.Log($"Starting loop for segment {segmentIndex} with synchronized offset: {startOffset}s");
+        {
+            if (segment.segmentStartDelay != clampedStartDelay || segment.segmentEndDelay != clampedEndDelay)
+                Debug.LogWarning($"Segment {segmentIndex} delays clamped in loop - Start: {segment.segmentStartDelay}s->{clampedStartDelay}s, End: {segment.segmentEndDelay}s->{clampedEndDelay}s");
+            
+            Debug.Log($"Starting loop for segment {segmentIndex} with cycle time: {actualCycleTime}s, start offset: {startOffset}s");
+        }
         
         // Create new loop sequence
         Sequence loopSequence = DOTween.Sequence();
         
-        // Add initial offset for synchronization
-        if (startOffset > 0f && startOffset < masterCycleTime)
+        // Add initial offset for synchronization (only if reasonable)
+        if (startOffset > 0f && startOffset < actualCycleTime)
         {
             loopSequence.AppendInterval(startOffset);
+        }
+        
+        // Add segment start delay
+        if (clampedStartDelay > 0f)
+        {
+            loopSequence.AppendInterval(clampedStartDelay);
         }
         
         // Add the segment playback loop
@@ -190,6 +223,12 @@ public class MainGame : MonoBehaviour
                 }
             });
             loopSequence.AppendInterval(segment.delayBetweenObjects);
+        }
+        
+        // Add segment end delay
+        if (clampedEndDelay > 0f)
+        {
+            loopSequence.AppendInterval(clampedEndDelay);
         }
         
         // Set to loop infinitely and start
@@ -415,7 +454,14 @@ public class MainGame : MonoBehaviour
         // Move to next segment after delay
         if (autoProgressSegments)
         {
-            DOVirtual.DelayedCall(segment.segmentEndDelay + delayBetweenSegments, () =>
+            // Clamp segment end delay to prevent extremely long waits that could break the flow
+            float clampedEndDelay = Mathf.Clamp(segment.segmentEndDelay, 0f, 10f);
+            float totalDelay = clampedEndDelay + delayBetweenSegments;
+            
+            if (debugMode && segment.segmentEndDelay != clampedEndDelay)
+                Debug.LogWarning($"Segment {segmentIndex} end delay clamped from {segment.segmentEndDelay}s to {clampedEndDelay}s to prevent timing issues");
+            
+            DOVirtual.DelayedCall(totalDelay, () =>
             {
                 StartSegment(segmentIndex + 1);
             });
