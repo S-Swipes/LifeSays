@@ -115,13 +115,13 @@ public class MainGame : MonoBehaviour
         if (objectIndex < 0 || objectIndex >= expectedClickTimes.Count)
             return false;
             
-        // Use the exact same timing calculation as EvaluateTimingAccuracy
+        // Use the EXACT same timing calculation as EvaluateTimingAccuracy - no modifications
         float currentTime = Time.time;
         float currentSegmentDuration = gameSegments[currentSegmentIndex].totalDuration;
         float timePassedSinceStartLoop = (currentTime - sequencePlayStartTime) % currentSegmentDuration;
         float expectedTime = expectedClickTimes[objectIndex];
         
-        // Calculate timing difference (same logic as EvaluateTimingAccuracy)
+        // Calculate timing difference (identical to EvaluateTimingAccuracy)
         float timingDifferenceUp = Mathf.Abs(timePassedSinceStartLoop - expectedTime);
         float timingDifferenceDown = Mathf.Abs(timingDifferenceUp - currentSegmentDuration);
         float timingDifference = Mathf.Min(timingDifferenceUp, timingDifferenceDown);
@@ -132,8 +132,8 @@ public class MainGame : MonoBehaviour
                      $"expectedTime={expectedTime:F3}, timingDifference={timingDifference:F3}");
         }
         
-        // Show timing indicator during the "good" timing window
-        return timingDifference <= goodTimingWindow;
+        // Show timing indicator during the "perfect" timing window for more precision
+        return timingDifference <= perfectTimingWindow;
     }
     
     void InitializeCamera()
