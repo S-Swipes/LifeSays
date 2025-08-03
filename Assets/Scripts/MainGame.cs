@@ -142,6 +142,12 @@ public class MainGame : MonoBehaviour
             // Switch to next camera when all segments are complete
             SwitchToNextCamera();
             
+            // Fade out background ambiance when game is complete
+            if (vfxController != null)
+            {
+                vfxController.FadeOutBackgroundAmbiance();
+            }
+            
             OnAllSegmentsCompleted?.Invoke();
             return;
         }

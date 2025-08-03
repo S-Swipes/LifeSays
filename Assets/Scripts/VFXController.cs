@@ -16,11 +16,19 @@ public class VFXController : MonoBehaviour
     public AudioClip okSound;
     public AudioClip wrongSound;
     
+    [Header("Background Ambiance")]
+    public AudioSource ambianceAudioSource;
+    public AudioClip backgroundAmbianceClip;
+    public float ambianceFadeOutDuration = 3f;
+    
     [Header("VFX Settings")]
     public float vfxDisplayDuration = 1.5f;
     public float vfxFadeOutDuration = 0.5f;
     
     private Tween currentVFXTween;
+    private Tween ambianceFadeTween;
+    private bool isAmbiancePlaying = false;
+    private float initialAmbianceVolume;
     
     public void ShowPerfectFeedback(Vector3? position = null)
     {
@@ -117,11 +125,71 @@ public class VFXController : MonoBehaviour
         }
     }
     
+    void Start()
+    {
+        // Cache the initial ambiance volume from the AudioSource component
+        if (ambianceAudioSource != null)
+        {
+            initialAmbianceVolume = ambianceAudioSource.volume;
+        }
+        
+        StartBackgroundAmbiance();
+    }
+    
+    public void StartBackgroundAmbiance()
+    {
+        if (ambianceAudioSource != null && backgroundAmbianceClip != null && !isAmbiancePlaying)
+        {
+            ambianceAudioSource.clip = backgroundAmbianceClip;
+            ambianceAudioSource.loop = true;
+            ambianceAudioSource.volume = initialAmbianceVolume; // Use cached initial volume
+            ambianceAudioSource.Play();
+            isAmbiancePlaying = true;
+        }
+    }
+    
+    public void FadeOutBackgroundAmbiance()
+    {
+        if (ambianceAudioSource != null && isAmbiancePlaying)
+        {
+            // Kill any existing fade tween
+            if (ambianceFadeTween != null)
+            {
+                ambianceFadeTween.Kill();
+            }
+            
+            // Fade out the ambiance volume
+            ambianceFadeTween = ambianceAudioSource.DOFade(0f, ambianceFadeOutDuration)
+                .OnComplete(() => {
+                    ambianceAudioSource.Stop();
+                    isAmbiancePlaying = false;
+                });
+        }
+    }
+    
+    public void StopBackgroundAmbiance()
+    {
+        if (ambianceAudioSource != null)
+        {
+            if (ambianceFadeTween != null)
+            {
+                ambianceFadeTween.Kill();
+            }
+            ambianceAudioSource.Stop();
+            isAmbiancePlaying = false;
+        }
+    }
+    
     void OnDestroy()
     {
         if (currentVFXTween != null)
         {
             currentVFXTween.Kill();
+        }
+        
+        if (ambianceFadeTween != null)
+        {
+            ambianceFadeTween.Kill();
         }
     }
 } 

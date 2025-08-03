@@ -290,6 +290,10 @@ PrefabInstance:
       propertyPath: audioSource
       value: 
       objectReference: {fileID: 951452762}
+    - target: {fileID: 4163144613571004788, guid: a1bbed64e012a48d49b7e5aac900adc4, type: 3}
+      propertyPath: ambianceAudioSource
+      value: 
+      objectReference: {fileID: 951452762}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

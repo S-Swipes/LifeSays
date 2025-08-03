@@ -57,6 +57,9 @@ MonoBehaviour:
   goodSound: {fileID: 8300000, guid: 32b23c9c576df47d7addb62fdcb7d3bf, type: 3}
   okSound: {fileID: 8300000, guid: 32b23c9c576df47d7addb62fdcb7d3bf, type: 3}
   wrongSound: {fileID: 8300000, guid: cbd1e90aef2e44350b2dfe67a347bca4, type: 3}
+  ambianceAudioSource: {fileID: 0}
+  backgroundAmbianceClip: {fileID: 8300000, guid: 422c844d7b60c4f8098037591fab6c8b, type: 3}
+  ambianceFadeOutDuration: 3
   vfxDisplayDuration: 1.5
   vfxFadeOutDuration: 0.5
 --- !u!1001 &139256529747493194
