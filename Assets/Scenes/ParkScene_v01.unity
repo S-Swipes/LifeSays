@@ -294,6 +294,10 @@ PrefabInstance:
       propertyPath: ambianceAudioSource
       value: 
       objectReference: {fileID: 951452762}
+    - target: {fileID: 4163144613571004788, guid: a1bbed64e012a48d49b7e5aac900adc4, type: 3}
+      propertyPath: backgroundAmbianceClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 55d7f412438d246e58dc056a9d91d9f0, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -364,6 +368,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 196844457228097296, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Name
+      value: Bird 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1209218582423425198, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: a441a8d95f2af472ea4a9371951bdc0b, type: 3}
+    - target: {fileID: 1557657886541297671, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 7be2d5245344d4e11a71c6559235b294, type: 3}
+    - target: {fileID: 1838787360860951459, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 130a74ac1bf2e47948e8472cc7a2e92a, type: 3}
+    - target: {fileID: 1969010413218873101, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 85fc4c969c81744cc887fbaa635631d9, type: 3}
+    - target: {fileID: 2059130189366112945, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Name
+      value: Bird 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2123343437763492697, guid: c654c136181134a409a84f3e977abfed, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.75
@@ -404,9 +432,61 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2577733943526463946, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 653fc6a7cb8ea41eb9b57d46962942d5, type: 3}
+    - target: {fileID: 2855124434945524379, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: ae4d21141b6fc42189f6a714673701f3, type: 3}
+    - target: {fileID: 3744189418632208638, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 0760f5c64b8a04c1f845c379b37596cb, type: 3}
+    - target: {fileID: 3773737227024060331, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Name
+      value: Frog 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4888137082796754073, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 60d41076bffe94ad5914dbfe632aaf79, type: 3}
+    - target: {fileID: 5098627166265451915, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Name
+      value: Bird 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5393254756260105775, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Name
+      value: Frog 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5732335605981292166, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Name
+      value: Bird 5
+      objectReference: {fileID: 0}
     - target: {fileID: 6368222127185871976, guid: c654c136181134a409a84f3e977abfed, type: 3}
       propertyPath: m_Name
       value: Park
+      objectReference: {fileID: 0}
+    - target: {fileID: 6772866032456769848, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 0e6de05e8098c4096be2d11f83c6176c, type: 3}
+    - target: {fileID: 7032402300374146033, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: da8307ce3df3a4a029883de2840b8314, type: 3}
+    - target: {fileID: 7717581222940981635, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 0a40a7a868ea34f688d2d8e832070376, type: 3}
+    - target: {fileID: 7832693548077651670, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Name
+      value: Frog 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8971357809156059106, guid: c654c136181134a409a84f3e977abfed, type: 3}
+      propertyPath: m_Name
+      value: Bird 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
