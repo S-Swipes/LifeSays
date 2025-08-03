@@ -4,22 +4,58 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Unity 3D game project called "LifeSays" built with Unity 6000.0.54f1. The project uses the Universal Render Pipeline (URP) for 2D rendering and includes the Unity Input System for advanced input handling.
+"LifeSays" is a Unity 3D rhythm/music game built with Unity 6000.0.54f1. It's a Simon Says-style game where players must interact with musical objects in precise timing sequences. The project uses the Universal Render Pipeline (URP) for 2D rendering and includes the Unity Input System for advanced input handling.
 
 ## Unity Project Structure
 
 - **Unity Version**: 6000.0.54f1
 - **Render Pipeline**: Universal Render Pipeline (URP) 2D
 - **Input System**: Unity's new Input System (not Legacy)
-- **Scene Setup**: Single sample scene at `Assets/Scenes/SampleScene.unity`
+- **Scenes**: 
+  - `Assets/Scenes/ParkScene_v01.unity` - Main game scene
+  - `Assets/Scenes/LoadingScene.unity` - Loading screen scene
+  - `Assets/Scenes/Archive/SampleScene.unity` - Basic template scene (archived)
+  - `Assets/Scenes/Archive/dudi.unity` - Additional scene (archived)
 
 ## Key Unity Packages
 
 - Universal Render Pipeline (URP) 17.0.4
 - Unity Input System 1.14.1
+- Cinemachine 3.1.4 - Advanced camera system
+- DOTween (Demigiant) - Animation and tweening
 - 2D Feature package (Animation, Tilemap, Sprite tools)
 - TextMeshPro for UI text
+- Unity Recorder 5.1.2 - Video/animation recording
 - Unity Test Framework for testing
+
+## Game Architecture
+
+### Core Game Scripts
+
+The game implements a musical Simon Says pattern with the following key components:
+
+- **MainGame.cs** (`Assets/Scripts/MainGame.cs:21`) - Core game controller managing segments, timing, and player input
+- **GameSegment** (`Assets/Scripts/MainGame.cs:8`) - Data structure for game segments containing musical objects and timing
+- **MusicalObjectControl.cs** - Controls individual interactive musical objects
+- **VFXController.cs** - Manages visual effects system for timing feedback
+- **CameraControl.cs** (`Assets/Scripts/CameraControl.cs:5`) - Manual camera switching system using keyboard input (A/S/D/E keys)
+- **GameSegmentLooper.cs** (`Assets/Scripts/GameSegmentLooper.cs:4`) - Handles segment looping and timing using DOTween
+- **LoadingScreenController.cs** - Manages loading screen with progress bar and scene transitions
+
+### Game Mechanics
+
+- **Timing System**: Precision-based timing with Perfect/Good/OK/Miss feedback windows
+- **Segment-Based Gameplay**: Game divided into segments with interactive musical objects
+- **Camera System**: Cinemachine mixing camera with manual switching
+- **VFX Feedback**: Visual effects for timing accuracy feedback
+
+### Assets Organization
+
+- **Prefabs/**: Game objects organized by category (BGs, Environments, InteractiveObjects, Segments, VFX)
+- **Scripts/**: C# scripts for game logic
+- **Art/**: Sprites and animations organized by type
+- **Sounds/**: Audio files for interactive objects and feedback
+- **Settings/**: URP renderer and lighting settings
 
 ## Development Commands
 
@@ -35,6 +71,7 @@ Unity projects are built and managed through the Unity Editor, not traditional b
 - Use Unity Test Runner (Window → General → Test Runner) for unit tests
 - Access via Window → Analysis → Console for runtime debugging
 - Performance profiling via Window → Analysis → Profiler
+- Game flow: LoadingScene.unity → ParkScene_v01.unity (main gameplay)
 
 ### Input System Configuration
 
@@ -54,32 +91,15 @@ The project uses a comprehensive input action setup defined in `Assets/InputSyst
 - Standard UI navigation and interaction controls
 - Multi-platform support (Keyboard/Mouse, Gamepad, Touch, XR)
 
-## Architecture Notes
-
-### Rendering Setup
-- Configured for 2D games with URP 2D renderer
-- Custom render pipeline assets in `Assets/Settings/`
-- Volume profiles for post-processing effects
-
-### No Custom Code Yet
-- Project appears to be a fresh Unity template
-- No custom C# scripts currently present
-- Ready for game development implementation
-
-### Input Architecture
-- Uses Unity's new Input System (Action-based)
-- Centralized input configuration in `.inputactions` file
-- Supports multiple control schemes simultaneously
-- Designed for cross-platform input handling
-
 ## Development Workflow
 
 1. Open project in Unity Editor
-2. Create/modify scenes in `Assets/Scenes/`
-3. Add custom scripts to `Assets/Scripts/` (create folder as needed)
+2. Modify scenes in `Assets/Scenes/` (primarily ParkScene_v01.unity for gameplay, LoadingScene.unity for loading screen)
+3. Edit scripts in `Assets/Scripts/` for game logic changes
 4. Configure input actions via the Input Actions window
-5. Test in Play Mode within Unity Editor
-6. Build via Unity's Build Settings when ready for deployment
+5. Test in Play Mode within Unity Editor (start from LoadingScene.unity for full experience)
+6. Use Unity Recorder for capturing gameplay footage
+7. Build via Unity's Build Settings when ready for deployment
 
 ## Unity-Specific Considerations
 
@@ -87,3 +107,4 @@ The project uses a comprehensive input action setup defined in `Assets/InputSyst
 - Asset serialization uses text-based .asset and .unity files
 - Meta files (.meta) track Unity's asset import settings
 - Package dependencies managed through Unity Package Manager
+- DOTween requires proper setup and initialization for animation sequences

@@ -52,6 +52,11 @@ MonoBehaviour:
   goodContainer: {fileID: 6945571407366511094}
   okContainer: {fileID: 794792227075388555}
   wrongContainer: {fileID: 8763931297265781250}
+  audioSource: {fileID: 0}
+  perfectSound: {fileID: 8300000, guid: 32b23c9c576df47d7addb62fdcb7d3bf, type: 3}
+  goodSound: {fileID: 8300000, guid: 32b23c9c576df47d7addb62fdcb7d3bf, type: 3}
+  okSound: {fileID: 8300000, guid: 32b23c9c576df47d7addb62fdcb7d3bf, type: 3}
+  wrongSound: {fileID: 8300000, guid: cbd1e90aef2e44350b2dfe67a347bca4, type: 3}
   vfxDisplayDuration: 1.5
   vfxFadeOutDuration: 0.5
 --- !u!1001 &139256529747493194

@@ -9,6 +9,13 @@ public class VFXController : MonoBehaviour
     public GameObject okContainer;
     public GameObject wrongContainer;
     
+    [Header("Audio Feedback")]
+    public AudioSource audioSource;
+    public AudioClip perfectSound;
+    public AudioClip goodSound;
+    public AudioClip okSound;
+    public AudioClip wrongSound;
+    
     [Header("VFX Settings")]
     public float vfxDisplayDuration = 1.5f;
     public float vfxFadeOutDuration = 0.5f;
@@ -17,21 +24,25 @@ public class VFXController : MonoBehaviour
     
     public void ShowPerfectFeedback(Vector3? position = null)
     {
+        PlayAudioFeedback(perfectSound);
         ShowVFXContainer(perfectContainer, position);
     }
     
     public void ShowGoodFeedback(Vector3? position = null)
     {
+        PlayAudioFeedback(goodSound);
         ShowVFXContainer(goodContainer, position);
     }
     
     public void ShowOkFeedback(Vector3? position = null)
     {
+        PlayAudioFeedback(okSound);
         ShowVFXContainer(okContainer, position);
     }
     
     public void ShowWrongFeedback(Vector3? position = null)
     {
+        PlayAudioFeedback(wrongSound);
         ShowVFXContainer(wrongContainer, position);
     }
     
@@ -96,6 +107,14 @@ public class VFXController : MonoBehaviour
         }
         
         HideAllContainers();
+    }
+    
+    private void PlayAudioFeedback(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
     }
     
     void OnDestroy()
