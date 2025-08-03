@@ -95,10 +95,11 @@ public class MainGame : MonoBehaviour
 
     void InitializeGame()
     {
-        gameStartTime = Time.time; // Record game start time for master timing synchronization
+        // Don't set gameStartTime yet - it will be set when first segment starts looping
+        gameStartTime = 0f; // Initialize to 0 to indicate timing hasn't started yet
         
         if (debugMode)
-            Debug.Log($"Initializing game with {gameSegments.Count} segments. Game start time: {gameStartTime}");
+            Debug.Log($"Initializing game with {gameSegments.Count} segments. Master timing will start after first segment completion.");
             
         // Initialize all segments
         for (int segmentIndex = 0; segmentIndex < gameSegments.Count; segmentIndex++)
@@ -188,31 +189,35 @@ public class MainGame : MonoBehaviour
         // For segments with high delays, use a simplified approach to avoid timing conflicts
         float startOffset = 0f;
         
-        // Simple global master beat synchronization
-        // All segments sync to the same master timeline starting from game start
-        float timeSinceGameStart = Time.time - gameStartTime;
-        float nextGlobalBeat = Mathf.Ceil(timeSinceGameStart / masterBeatInterval) * masterBeatInterval;
-        float targetStartTime = nextGlobalBeat + clampedStartDelay;
-        startOffset = targetStartTime - timeSinceGameStart;
-        
-        // Ensure we have a minimum delay to avoid immediate starts
-        if (startOffset < 0.1f)
+        // Special handling for first segment: start master timing when first segment begins looping
+        if (segmentIndex == 0 && gameStartTime == 0f)
         {
-            startOffset += masterBeatInterval;
+            // This is the first segment starting its loop - begin master timing now!
+            gameStartTime = Time.time;
+            startOffset = clampedStartDelay; // Start with just the segment's natural start delay
+            
+            if (debugMode)
+                Debug.Log($"Master timing grid started! First segment loop begins at {gameStartTime:F2}s with start delay {startOffset:F2}s");
         }
-        
-        if (debugMode)
+        else
         {
-            float originalEndDelay = segment.totalDuration - segment.startDelay - objectsPlayTime;
-            if (segment.startDelay != clampedStartDelay || originalEndDelay != clampedEndDelay)
-                Debug.LogWarning($"Segment {segmentIndex} delays clamped in loop - Start: {segment.startDelay}s->{clampedStartDelay}s, End: {originalEndDelay}s->{clampedEndDelay}s");
+            // Simple global master beat synchronization
+            // All segments sync to the same master timeline starting from when first segment began looping
+            float timeSinceGameStart = Time.time - gameStartTime;
+            float nextGlobalBeat = Mathf.Ceil(timeSinceGameStart / masterBeatInterval) * masterBeatInterval;
+            float targetStartTime = nextGlobalBeat + clampedStartDelay;
+            startOffset = targetStartTime - timeSinceGameStart;
             
-            // Check if totalDuration is aligned with masterBeatInterval for better sync
-            float beatAlignment = segment.totalDuration % masterBeatInterval;
-            if (beatAlignment > 0.01f)
-                Debug.LogWarning($"Segment {segmentIndex} totalDuration ({segment.totalDuration}s) is not aligned with masterBeatInterval ({masterBeatInterval}s). Consider using multiples of masterBeatInterval for better sync.");
+            // Ensure we have a minimum delay to avoid immediate starts
+            if (startOffset < 0.1f)
+            {
+                startOffset += masterBeatInterval;
+            }
             
-            Debug.Log($"Segment {segmentIndex}: timeSinceStart={timeSinceGameStart:F2}s, nextBeat={nextGlobalBeat:F2}s, targetStart={targetStartTime:F2}s, startOffset={startOffset:F2}s");
+            if (debugMode)
+            {
+                Debug.Log($"Segment {segmentIndex}: timeSinceStart={timeSinceGameStart:F2}s, nextBeat={nextGlobalBeat:F2}s, targetStart={targetStartTime:F2}s, startOffset={startOffset:F2}s");
+            }
         }
         
         // Create new loop sequence
@@ -618,20 +623,13 @@ public class MainGame : MonoBehaviour
         OnSegmentCompleted?.Invoke(segmentIndex);
         
         // Start the loop for this completed segment in the background
-        DOVirtual.DelayedCall(1f, () =>
-        {
-            StartSegmentLoop(segmentIndex);
-            
-            // Move camera to the next segment (if there are more segments)
-            if (segmentIndex + 1 < gameSegments.Count)
-            {
-                SwitchToNextCamera();
-            }
-        });
+        // No delay needed - master timing grid handles synchronization
+        StartSegmentLoop(segmentIndex);
         
-        // For the last segment, move camera immediately without waiting for loop delay
-        if (segmentIndex + 1 >= gameSegments.Count)
+        // Move camera to the next segment (if there are more segments)
+        if (segmentIndex + 1 < gameSegments.Count)
         {
+            Debug.Log("%%% last segment go next cam");
             SwitchToNextCamera();
         }
         
@@ -641,7 +639,8 @@ public class MainGame : MonoBehaviour
             // Calculate segment end delay based on total duration
             float objectsPlayTime = segment.interactiveObjects.Count * segment.delayBetweenObjects;
             float clampedEndDelay = Mathf.Clamp(segment.totalDuration - segment.startDelay - objectsPlayTime, 0f, 10f);
-            float totalDelay = clampedEndDelay + delayBetweenSegments;
+            // Remove delayBetweenSegments for smoother progression - timing is now handled by master timing grid
+            float totalDelay = clampedEndDelay;
             
             float originalEndDelay = segment.totalDuration - segment.startDelay - objectsPlayTime;
             if (debugMode && originalEndDelay != clampedEndDelay)
@@ -656,6 +655,8 @@ public class MainGame : MonoBehaviour
     
     void SwitchToNextCamera()
     {
+        Debug.Log("%%%  next cam");
+
         if (mixingCamera == null)
         {
             Debug.LogWarning("MixingCamera reference not set!");
@@ -725,8 +726,8 @@ public class MainGame : MonoBehaviour
         }
         segmentLoops.Clear();
         
-        // Reset game start time for new master timing
-        gameStartTime = Time.time;
+        // Reset master timing - it will start when first segment begins looping
+        gameStartTime = 0f;
         
         // Reset all segments
         foreach (var segment in gameSegments)

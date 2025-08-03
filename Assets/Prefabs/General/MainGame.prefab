@@ -66,6 +66,21 @@ MonoBehaviour:
     isLooping: 0
     totalDuration: 4
     startDelay: 1
+  - segmentName: Birds
+    interactiveObjects:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    delayBetweenObjects: 1
+    isCompleted: 0
+    isLooping: 0
+    totalDuration: 8
+    startDelay: 2
   - segmentName: Hippo
     interactiveObjects:
     - {fileID: 0}
