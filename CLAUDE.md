@@ -37,7 +37,7 @@ The game implements a musical Simon Says pattern with the following key componen
 - **MainGame.cs** (`Assets/Scripts/MainGame.cs:21`) - Core game controller managing segments, timing, and player input
 - **GameSegment** (`Assets/Scripts/MainGame.cs:8`) - Data structure for game segments containing musical objects and timing
 - **MusicalObjectControl.cs** - Controls individual interactive musical objects
-- **VFXController.cs** - Manages visual effects system for timing feedback
+- **VFXController.cs** - Manages visual and audio feedback system for timing feedback (Perfect/Good/OK/Wrong)
 - **CameraControl.cs** (`Assets/Scripts/CameraControl.cs:5`) - Manual camera switching system using keyboard input (A/S/D/E keys)
 - **GameSegmentLooper.cs** (`Assets/Scripts/GameSegmentLooper.cs:4`) - Handles segment looping and timing using DOTween
 - **LoadingScreenController.cs** - Manages loading screen with progress bar and scene transitions
@@ -47,14 +47,14 @@ The game implements a musical Simon Says pattern with the following key componen
 - **Timing System**: Precision-based timing with Perfect/Good/OK/Miss feedback windows
 - **Segment-Based Gameplay**: Game divided into segments with interactive musical objects
 - **Camera System**: Cinemachine mixing camera with manual switching
-- **VFX Feedback**: Visual effects for timing accuracy feedback
+- **Audio-Visual Feedback**: Combined visual effects and audio feedback for timing accuracy (Perfect/Good/OK/Wrong)
 
 ### Assets Organization
 
 - **Prefabs/**: Game objects organized by category (BGs, Environments, InteractiveObjects, Segments, VFX)
 - **Scripts/**: C# scripts for game logic
 - **Art/**: Sprites and animations organized by type
-- **Sounds/**: Audio files for interactive objects and feedback
+- **Sounds/**: Audio files organized by purpose (InteractiveObjects/, Indicators/ for timing feedback)
 - **Settings/**: URP renderer and lighting settings
 
 ## Development Commands
