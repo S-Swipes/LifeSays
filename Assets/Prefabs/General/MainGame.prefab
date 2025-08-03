@@ -78,7 +78,7 @@ MonoBehaviour:
   autoProgressSegments: 1
   masterBeatInterval: 1
   mixingCamera: {fileID: 0}
-  cameraTransitionDuration: 1
+  cameraTransitionDuration: 2
   vfxController: {fileID: 0}
   perfectTimingWindow: 0.15
   goodTimingWindow: 0.3
