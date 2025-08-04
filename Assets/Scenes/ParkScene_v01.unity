@@ -294,10 +294,6 @@ PrefabInstance:
       propertyPath: ambianceAudioSource
       value: 
       objectReference: {fileID: 951452762}
-    - target: {fileID: 4163144613571004788, guid: a1bbed64e012a48d49b7e5aac900adc4, type: 3}
-      propertyPath: backgroundAmbianceClip
-      value: 
-      objectReference: {fileID: 8300000, guid: 55d7f412438d246e58dc056a9d91d9f0, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -376,18 +372,10 @@ PrefabInstance:
       propertyPath: m_Resource
       value: 
       objectReference: {fileID: 8300000, guid: a441a8d95f2af472ea4a9371951bdc0b, type: 3}
-    - target: {fileID: 1557657886541297671, guid: c654c136181134a409a84f3e977abfed, type: 3}
-      propertyPath: m_Resource
-      value: 
-      objectReference: {fileID: 8300000, guid: 7be2d5245344d4e11a71c6559235b294, type: 3}
     - target: {fileID: 1838787360860951459, guid: c654c136181134a409a84f3e977abfed, type: 3}
       propertyPath: m_Resource
       value: 
       objectReference: {fileID: 8300000, guid: 130a74ac1bf2e47948e8472cc7a2e92a, type: 3}
-    - target: {fileID: 1969010413218873101, guid: c654c136181134a409a84f3e977abfed, type: 3}
-      propertyPath: m_Resource
-      value: 
-      objectReference: {fileID: 8300000, guid: 85fc4c969c81744cc887fbaa635631d9, type: 3}
     - target: {fileID: 2059130189366112945, guid: c654c136181134a409a84f3e977abfed, type: 3}
       propertyPath: m_Name
       value: Bird 1
@@ -440,10 +428,6 @@ PrefabInstance:
       propertyPath: m_Resource
       value: 
       objectReference: {fileID: 8300000, guid: ae4d21141b6fc42189f6a714673701f3, type: 3}
-    - target: {fileID: 3744189418632208638, guid: c654c136181134a409a84f3e977abfed, type: 3}
-      propertyPath: m_Resource
-      value: 
-      objectReference: {fileID: 8300000, guid: 0760f5c64b8a04c1f845c379b37596cb, type: 3}
     - target: {fileID: 3773737227024060331, guid: c654c136181134a409a84f3e977abfed, type: 3}
       propertyPath: m_Name
       value: Frog 3
@@ -472,14 +456,6 @@ PrefabInstance:
       propertyPath: m_Resource
       value: 
       objectReference: {fileID: 8300000, guid: 0e6de05e8098c4096be2d11f83c6176c, type: 3}
-    - target: {fileID: 7032402300374146033, guid: c654c136181134a409a84f3e977abfed, type: 3}
-      propertyPath: m_Resource
-      value: 
-      objectReference: {fileID: 8300000, guid: da8307ce3df3a4a029883de2840b8314, type: 3}
-    - target: {fileID: 7717581222940981635, guid: c654c136181134a409a84f3e977abfed, type: 3}
-      propertyPath: m_Resource
-      value: 
-      objectReference: {fileID: 8300000, guid: 0a40a7a868ea34f688d2d8e832070376, type: 3}
     - target: {fileID: 7832693548077651670, guid: c654c136181134a409a84f3e977abfed, type: 3}
       propertyPath: m_Name
       value: Frog 1
@@ -604,18 +580,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1143161212}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
-      propertyPath: gameSegments.Array.data[2].startDelay
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
-      propertyPath: gameSegments.Array.data[2].totalDuration
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
-      propertyPath: gameSegments.Array.data[2].delayBetweenObjects
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: 'gameSegments.Array.data[0].interactiveObjects.Array.data[0]'
       value: 
       objectReference: {fileID: 955669061}
@@ -634,11 +598,11 @@ PrefabInstance:
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: 'gameSegments.Array.data[1].interactiveObjects.Array.data[0]'
       value: 
-      objectReference: {fileID: 2132978763}
+      objectReference: {fileID: 1786170409}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: 'gameSegments.Array.data[1].interactiveObjects.Array.data[1]'
       value: 
-      objectReference: {fileID: 1786170409}
+      objectReference: {fileID: 2132978763}
     - target: {fileID: 4159280371904691296, guid: 2ba1671968eff4e0da11400d0d37c441, type: 3}
       propertyPath: 'gameSegments.Array.data[2].interactiveObjects.Array.data[0]'
       value: 
