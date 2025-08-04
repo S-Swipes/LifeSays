@@ -32,19 +32,19 @@ public class VFXController : MonoBehaviour
     
     public void ShowPerfectFeedback(Vector3? position = null)
     {
-        PlayAudioFeedback(perfectSound);
+        //PlayAudioFeedback(perfectSound);
         ShowVFXContainer(perfectContainer, position);
     }
     
     public void ShowGoodFeedback(Vector3? position = null)
     {
-        PlayAudioFeedback(goodSound);
+       // PlayAudioFeedback(goodSound);
         ShowVFXContainer(goodContainer, position);
     }
     
     public void ShowOkFeedback(Vector3? position = null)
     {
-        PlayAudioFeedback(okSound);
+        //PlayAudioFeedback(okSound);
         ShowVFXContainer(okContainer, position);
     }
     
