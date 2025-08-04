@@ -623,6 +623,12 @@ public class MainGame : MonoBehaviour
         segment.isCompleted = true;
         isPlayingSegment = false;
         
+        // Play correct sound when segment completes
+        if (vfxController != null)
+        {
+            vfxController.PlayCorrectSound();
+        }
+        
         if (debugMode)
             Debug.Log($"Segment {segmentIndex} completed: {segment.segmentName}");
             

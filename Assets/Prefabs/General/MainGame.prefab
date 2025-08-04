@@ -76,11 +76,11 @@ MonoBehaviour:
     - {fileID: 0}
     - {fileID: 0}
     - {fileID: 0}
-    delayBetweenObjects: 1
+    delayBetweenObjects: 0.5
     isCompleted: 0
     isLooping: 0
-    totalDuration: 8
-    startDelay: 2
+    totalDuration: 4
+    startDelay: 0
   - segmentName: Hippo
     interactiveObjects:
     - {fileID: 0}

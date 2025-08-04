@@ -15,6 +15,7 @@ public class VFXController : MonoBehaviour
     public AudioClip goodSound;
     public AudioClip okSound;
     public AudioClip wrongSound;
+    public AudioClip correctSound;
     
     [Header("Background Ambiance")]
     public AudioSource ambianceAudioSource;
@@ -52,6 +53,11 @@ public class VFXController : MonoBehaviour
     {
         PlayAudioFeedback(wrongSound);
         ShowVFXContainer(wrongContainer, position);
+    }
+    
+    public void PlayCorrectSound()
+    {
+        PlayAudioFeedback(correctSound);
     }
     
     private void ShowVFXContainer(GameObject container, Vector3? position = null)
